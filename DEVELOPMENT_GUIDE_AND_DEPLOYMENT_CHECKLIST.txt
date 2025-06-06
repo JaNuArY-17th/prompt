@@ -1,0 +1,489 @@
+# Mệnh Lệnh Độc Lập - Development Guide
+
+## 🎮 Game Overview
+
+**Mệnh Lệnh Độc Lập** (Independence Order) is a 2.5D isometric action shooter game built with Phaser.js. The game features multiple chapters with combat mechanics, Vietnamese language learning elements, and a retro aesthetic using the VT323 font.
+
+### Key Features
+- **Isometric 2.5D Gameplay**: Top-down action shooter with depth perception
+- **Multi-Chapter Campaign**: Currently supports 3 chapters with unique objectives
+- **Vietnamese Learning Integration**: Blackboard puzzles in Chapter 2 for language learning
+- **Retro Aesthetic**: VT323 pixel-perfect font throughout the entire game
+- **Victory Screen**: Beautiful animated victory scene with Vietnamese text
+- **Real-time Combat**: Weapon switching, ammo management, and melee attacks
+- **Interactive Map System**: Minimap with real-time exploration tracking
+- **Dev Tools**: Built-in teleportation and chapter skipping for development
+
+## 🛠 Technology Stack
+
+### Frontend
+- **Framework**: Vite.js (Build tool and dev server)
+- **Game Engine**: Phaser.js 3.90.0
+- **Physics**: Matter.js 0.20.0
+- **Networking**: Socket.io-client 4.8.1
+- **Fonts**: VT323 (Google Fonts)
+
+### Backend
+- **Server**: Node.js with Express
+- **Real-time Communication**: Socket.io
+- **File Structure**: Modular scene-based architecture
+
+### Deployment
+- **Platform**: Vercel
+- **Build System**: Vite production build
+- **Configuration**: Custom vercel.json for SPA routing
+
+## 📁 Project Structure
+
+```
+Promptkathon/
+├── client/                          # Frontend game client
+│   ├── public/                      # Static assets
+│   │   ├── scenes/                  # Game scenes
+│   │   │   ├── MainMenuScene.js     # Main menu with Vietnamese UI
+│   │   │   ├── GameScene.js         # Chapter 1 gameplay
+│   │   │   ├── Chapter2Scene.js     # Vietnamese learning puzzles
+│   │   │   ├── Chapter3Scene.js     # Final combat chapter
+│   │   │   ├── UIScene.js           # HUD, minimap, dev tools
+│   │   │   ├── VictoryScene.js      # Victory screen (NEW)
+│   │   │   ├── BlackboardPuzzleScene.js # Vietnamese word puzzles
+│   │   │   └── PreloadScene.js      # Asset preloading
+│   │   ├── entities/                # Game objects
+│   │   │   ├── Player.js            # Player character
+│   │   │   ├── Enemy.js             # Enemy AI
+│   │   │   ├── Warehouse.js         # Destructible objectives
+│   │   │   └── Granary.js           # Interactive buildings
+│   │   ├── systems/                 # Game systems
+│   │   │   ├── TileSystem.js        # World generation
+│   │   │   ├── WeaponSystem.js      # Combat mechanics
+│   │   │   └── InputSystem.js       # Input handling
+│   │   ├── utils/                   # Utilities
+│   │   │   ├── ChapterManager.js    # Progress management
+│   │   │   └── AssetLoader.js       # Asset management
+│   │   ├── config/                  # Configuration
+│   │   │   └── GameConfig.js        # Phaser configuration
+│   │   ├── main.js                  # Entry point
+│   │   └── style.css                # Global styles
+│   ├── index.html                   # HTML entry point
+│   ├── package.json                 # Dependencies
+│   └── vite.config.js               # Vite configuration
+├── server/                          # Backend server
+│   ├── src/                         # Server source code
+│   └── package.json                 # Server dependencies
+├── vercel.json                      # Vercel deployment config
+├── README.md                        # Project overview
+└── DEVELOPMENT_GUIDE.md             # This document
+```
+
+## 🔄 Recent Development Updates
+
+### Phase 1: Core Game Development
+- ✅ Basic isometric gameplay mechanics
+- ✅ Multi-chapter system with progress saving
+- ✅ Combat system with multiple weapons
+- ✅ Interactive map and minimap
+- ✅ Vietnamese learning puzzles in Chapter 2
+
+### Phase 2: UI/UX Improvements (Latest)
+- ✅ **Victory Screen**: Created dedicated `VictoryScene.js` with:
+  - Animated star field background
+  - Vietnamese celebration text
+  - Particle effects and sparkles
+  - Navigation buttons (Return to Menu / Play Again)
+  - Proper scene transition handling
+
+- ✅ **Font Modernization**: Upgraded from Arial/Courier New to VT323:
+  - Updated all UI elements across all scenes
+  - Imported VT323 from Google Fonts
+  - Maintained readability while achieving retro aesthetic
+
+- ✅ **Vietnamese Localization**: 
+  - Game title: "Mệnh Lệnh Độc Lập" (Independence Order)
+  - Menu buttons: "BẮT ĐẦU GAME", "ĐIỀU KHIỂN"
+  - Victory messages in Vietnamese
+  - Control instructions translated
+
+- ✅ **Developer Tools Enhancement**:
+  - Chapter 3 dev button now properly links to victory screen
+  - Improved scene management and cleanup
+  - Better error handling and debugging
+
+### Phase 3: Deployment Ready
+- ✅ **Vercel Configuration**: 
+  - Created `vercel.json` for proper Vite deployment
+  - Configured build commands and output directories
+  - Set up SPA routing for client-side navigation
+
+## 🚀 Local Development Setup
+
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- Git
+
+### Installation Steps
+
+1. **Clone the Repository**
+```bash
+git clone https://github.com/JaNuArY-17th/prompt.git
+cd prompt
+```
+
+2. **Install Client Dependencies**
+```bash
+cd client
+npm install
+```
+
+3. **Install Server Dependencies** (if using multiplayer features)
+```bash
+cd ../server
+npm install
+```
+
+4. **Start Development Server**
+```bash
+cd ../client
+npm run dev
+```
+
+The game will be available at `http://localhost:3000`
+
+### Development Commands
+
+```bash
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+## 🌐 Deployment Guide
+
+### Vercel Deployment (Recommended)
+
+#### Method 1: Vercel CLI (Fastest)
+
+1. **Install Vercel CLI**
+```bash
+npm install -g vercel
+```
+
+2. **Login to Vercel**
+```bash
+vercel login
+# Choose "Continue with GitHub"
+```
+
+3. **Deploy**
+```bash
+vercel --prod
+```
+
+#### Method 2: Vercel Dashboard
+
+1. **Go to [vercel.com](https://vercel.com)**
+2. **Sign up/Login** with GitHub account
+3. **Click "New Project"**
+4. **Import Repository**: `JaNuArY-17th/prompt`
+5. **Configure Settings**:
+   - **Framework Preset**: Vite
+   - **Build Command**: `cd client && npm run build`
+   - **Output Directory**: `client/dist`
+   - **Install Command**: `cd client && npm install`
+6. **Deploy**
+
+#### Vercel Configuration
+The project includes a `vercel.json` file with the following configuration:
+
+```json
+{
+  "buildCommand": "cd client && npm run build",
+  "outputDirectory": "client/dist",
+  "installCommand": "cd client && npm install",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+```
+
+### Alternative Deployment Options
+
+#### Netlify
+1. Connect GitHub repository
+2. Build command: `cd client && npm run build`
+3. Publish directory: `client/dist`
+
+#### GitHub Pages
+1. Enable GitHub Pages in repository settings
+2. Use GitHub Actions for automated deployment
+3. Build and deploy to `gh-pages` branch
+
+## 🎯 Game Features & Mechanics
+
+### Chapter System
+- **Chapter 1**: Basic combat and warehouse destruction
+- **Chapter 2**: Vietnamese learning with blackboard puzzles
+- **Chapter 3**: Final boss encounters and radar tower destruction
+
+### Combat System
+- **Weapons**: Pistol, Rifle, Shotgun with different ammo types
+- **Melee**: Close-range combat with 'E' key
+- **Health**: Regenerating health system with visual indicators
+- **Ammo Management**: Limited ammunition with reload mechanics
+
+### Learning System (Chapter 2)
+- Interactive blackboards with Vietnamese vocabulary
+- Puzzle-solving mechanics integrated with combat
+- Educational content delivery through gameplay
+
+### Developer Tools
+- **Dev Teleport Panel**: Quick navigation between objectives
+- **Chapter Skip**: Jump between chapters for testing
+- **Memory Monitor**: Performance debugging (F3 key)
+- **Minimap Toggle**: Full-screen tactical map (M key)
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+#### Build Failures
+```bash
+# Clear node modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+```
+
+#### Font Loading Issues
+- Ensure internet connection for Google Fonts
+- Check browser console for font loading errors
+- Verify VT323 font import in `index.html`
+
+#### Scene Transition Problems
+- Check console for Phaser scene errors
+- Verify scene keys match exactly
+- Ensure proper scene cleanup in destroy methods
+
+#### Vercel Deployment Issues
+- Verify `vercel.json` configuration
+- Check build logs in Vercel dashboard
+- Ensure all dependencies are in `package.json`
+
+### Performance Optimization
+- The game uses sprite pooling for performance
+- Tile-based rendering with viewport culling
+- Asset preloading to minimize runtime loading
+
+## 📝 Development Best Practices
+
+### Code Organization
+- **Scene-based Architecture**: Each game state is a separate Phaser scene
+- **Modular Systems**: Combat, input, and tile systems are separate modules
+- **Configuration Management**: Centralized game configuration
+- **Asset Management**: Organized asset loading and cleanup
+
+### Git Workflow
+- Feature branches for new development
+- Descriptive commit messages with emojis
+- Regular pushes to main branch
+- Tagged releases for deployment milestones
+
+### Testing
+- Local build testing before deployment
+- Cross-browser compatibility checks
+- Performance testing with dev tools
+- User experience testing for Vietnamese content
+
+## 🎨 Asset Management
+
+### Fonts
+- **Primary**: VT323 (Google Fonts)
+- **Fallback**: Monospace system fonts
+- **Implementation**: CSS font-family declarations
+
+### Graphics
+- Sprite-based rendering for game objects
+- Procedural generation for world tiles
+- Color-coded UI elements for accessibility
+
+### Audio (Future Enhancement)
+- Sound effects for combat actions
+- Background music for each chapter
+- Vietnamese pronunciation guides
+
+## 🔮 Future Development Plans
+
+### Immediate Enhancements
+- [ ] Audio system implementation
+- [ ] Save game persistence
+- [ ] Additional Vietnamese vocabulary
+- [ ] Mobile responsive design
+
+### Long-term Goals
+- [ ] Multiplayer capabilities
+- [ ] Level editor for custom maps
+- [ ] Achievement system
+- [ ] Localization for other languages
+
+## 📄 License & Credits
+
+### Development Team
+- Game Design & Programming
+- Vietnamese Content Integration
+- UI/UX Design with Cultural Elements
+
+### Technologies Used
+- Phaser.js game engine
+- Vite.js build system
+- Vercel deployment platform
+- Google Fonts (VT323)
+
+---
+
+**Game Title**: Mệnh Lệnh Độc Lập (Independence Order)  
+**Version**: 2.0.0  
+**Last Updated**: 2024  
+**Deployment**: [Live on Vercel](https://prompt-xxx.vercel.app)  
+
+For support or contributions, please visit the [GitHub repository](https://github.com/JaNuArY-17th/prompt). 
+
+
+# 🚀 Deployment Checklist - Mệnh Lệnh Độc Lập
+
+## Pre-Deployment Verification
+
+### ✅ Code Quality
+- [ ] All features tested locally
+- [ ] No console errors in browser
+- [ ] Game builds successfully (`npm run build`)
+- [ ] Victory screen navigation works
+- [ ] VT323 font loads properly
+- [ ] Vietnamese text displays correctly
+
+### ✅ Git Repository
+- [ ] All changes committed
+- [ ] Repository pushed to GitHub
+- [ ] `vercel.json` configuration present
+- [ ] Documentation updated
+
+## Vercel Deployment Steps
+
+### Method 1: CLI Deployment (Recommended)
+
+```bash
+# 1. Install Vercel CLI (if not already installed)
+npm install -g vercel
+
+# 2. Login to Vercel
+vercel login
+# Choose "Continue with GitHub"
+
+# 3. Deploy to production
+vercel --prod
+```
+
+### Method 2: Dashboard Deployment
+
+1. **Go to [vercel.com](https://vercel.com)**
+2. **Login** with GitHub account
+3. **Click "New Project"**
+4. **Select Repository**: `JaNuArY-17th/prompt`
+5. **Configure Build Settings**:
+   ```
+   Framework Preset: Vite
+   Build Command: cd client && npm run build
+   Output Directory: client/dist
+   Install Command: cd client && npm install
+   ```
+6. **Click "Deploy"**
+
+## Post-Deployment Verification
+
+### ✅ Functionality Tests
+- [ ] Game loads without errors
+- [ ] Main menu displays in Vietnamese
+- [ ] All chapters are accessible
+- [ ] Victory screen appears correctly
+- [ ] Dev tools work (teleport buttons)
+- [ ] Font rendering is correct (VT323)
+- [ ] Scene transitions work properly
+
+### ✅ Performance Checks
+- [ ] Page load time < 5 seconds
+- [ ] No JavaScript errors in console
+- [ ] Game runs smoothly (60 FPS)
+- [ ] Assets load properly
+
+### ✅ Browser Compatibility
+- [ ] Works in Chrome
+- [ ] Works in Firefox
+- [ ] Works in Safari
+- [ ] Works in Edge
+- [ ] Mobile responsive (if applicable)
+
+## Troubleshooting Common Issues
+
+### Build Failures
+```bash
+# Clear cache and reinstall
+cd client
+rm -rf node_modules package-lock.json
+npm install
+npm run build
+```
+
+### Vercel Configuration Issues
+- Verify `vercel.json` is in project root
+- Check build command points to client directory
+- Ensure output directory is `client/dist`
+
+### Font Loading Problems
+- Check Google Fonts CDN is accessible
+- Verify VT323 import in `index.html`
+- Check network tab for font loading errors
+
+## Quick Commands Reference
+
+```bash
+# Local development
+cd client && npm run dev
+
+# Local build test
+cd client && npm run build
+
+# Deploy to Vercel
+vercel --prod
+
+# Check deployment status
+vercel ls
+
+# View logs
+vercel logs [deployment-url]
+```
+
+## Environment URLs
+
+- **Development**: `http://localhost:3000`
+- **Production**: `https://[project-name].vercel.app`
+- **GitHub**: `https://github.com/JaNuArY-17th/prompt`
+
+## Success Criteria
+
+🎉 **Deployment is successful when**:
+- Game loads and displays "Mệnh Lệnh Độc Lập" title
+- All UI elements use VT323 font
+- Victory screen shows Vietnamese text
+- Dev buttons work in Chapter 3
+- No console errors or 404s
+- Vercel deployment status shows "Ready"
+
+---
+*Last updated: 2024* 

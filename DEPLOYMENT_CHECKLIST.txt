@@ -1,0 +1,131 @@
+# 🚀 Deployment Checklist - Mệnh Lệnh Độc Lập
+
+## Pre-Deployment Verification
+
+### ✅ Code Quality
+- [ ] All features tested locally
+- [ ] No console errors in browser
+- [ ] Game builds successfully (`npm run build`)
+- [ ] Victory screen navigation works
+- [ ] VT323 font loads properly
+- [ ] Vietnamese text displays correctly
+
+### ✅ Git Repository
+- [ ] All changes committed
+- [ ] Repository pushed to GitHub
+- [ ] `vercel.json` configuration present
+- [ ] Documentation updated
+
+## Vercel Deployment Steps
+
+### Method 1: CLI Deployment (Recommended)
+
+```bash
+# 1. Install Vercel CLI (if not already installed)
+npm install -g vercel
+
+# 2. Login to Vercel
+vercel login
+# Choose "Continue with GitHub"
+
+# 3. Deploy to production
+vercel --prod
+```
+
+### Method 2: Dashboard Deployment
+
+1. **Go to [vercel.com](https://vercel.com)**
+2. **Login** with GitHub account
+3. **Click "New Project"**
+4. **Select Repository**: `JaNuArY-17th/prompt`
+5. **Configure Build Settings**:
+   ```
+   Framework Preset: Vite
+   Build Command: cd client && npm run build
+   Output Directory: client/dist
+   Install Command: cd client && npm install
+   ```
+6. **Click "Deploy"**
+
+## Post-Deployment Verification
+
+### ✅ Functionality Tests
+- [ ] Game loads without errors
+- [ ] Main menu displays in Vietnamese
+- [ ] All chapters are accessible
+- [ ] Victory screen appears correctly
+- [ ] Dev tools work (teleport buttons)
+- [ ] Font rendering is correct (VT323)
+- [ ] Scene transitions work properly
+
+### ✅ Performance Checks
+- [ ] Page load time < 5 seconds
+- [ ] No JavaScript errors in console
+- [ ] Game runs smoothly (60 FPS)
+- [ ] Assets load properly
+
+### ✅ Browser Compatibility
+- [ ] Works in Chrome
+- [ ] Works in Firefox
+- [ ] Works in Safari
+- [ ] Works in Edge
+- [ ] Mobile responsive (if applicable)
+
+## Troubleshooting Common Issues
+
+### Build Failures
+```bash
+# Clear cache and reinstall
+cd client
+rm -rf node_modules package-lock.json
+npm install
+npm run build
+```
+
+### Vercel Configuration Issues
+- Verify `vercel.json` is in project root
+- Check build command points to client directory
+- Ensure output directory is `client/dist`
+
+### Font Loading Problems
+- Check Google Fonts CDN is accessible
+- Verify VT323 import in `index.html`
+- Check network tab for font loading errors
+
+## Quick Commands Reference
+
+```bash
+# Local development
+cd client && npm run dev
+
+# Local build test
+cd client && npm run build
+
+# Deploy to Vercel
+vercel --prod
+
+# Check deployment status
+vercel ls
+
+# View logs
+vercel logs [deployment-url]
+```
+
+## Environment URLs
+
+- **Development**: `http://localhost:3000`
+- **Production**: `https://[project-name].vercel.app`
+- **GitHub**: `https://github.com/JaNuArY-17th/prompt`
+
+## Success Criteria
+
+🎉 **Deployment is successful when**:
+- Game loads and displays "Mệnh Lệnh Độc Lập" title
+- All UI elements use VT323 font
+- Victory screen shows Vietnamese text
+- Dev buttons work in Chapter 3
+- No console errors or 404s
+- Vercel deployment status shows "Ready"
+
+---
+*Last updated: 2024* 
