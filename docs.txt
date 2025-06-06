@@ -1,0 +1,73 @@
+1. Story + Gameplay:
+
+Still following the slogan “Fight famine, arson, and foreign invaders,” so the game keeps 3 main actions:
+
+Destroying rice warehouses
+
+Solving puzzles (representing studying and learning ideology)
+
+Destroying Japanese-controlled rice warehouses (to fight famine)
+
+But this time, instead of 3 separate maps, there will be only one single map, with a linear progression starting from the bottom and gradually moving upwards.
+
+Main Objective (to win the game):
+Destroy all 3 rice warehouses, which are placed along the main path of the map. The final, largest warehouse is at the end.
+To destroy a warehouse, the player must be very close (within 2 tiles) to shoot it.
+
+Side Quest (optional but beneficial):
+Solving puzzles. There are small side paths branching off the main road that hide puzzle boards. The player has to explore the map to find and interact with these boards to solve the puzzles.
+
+Game Mechanics (important for gameplay logic):
+The player starts with base stats:
+
+Health
+
+Damage
+
+Speed
+
+Vision range
+
+These stats will be boosted every time the player finds and completes a side quest puzzle.
+
+The game takes place at night, with the character’s initial vision range limited to a radius of 4 tiles.
+
+Each rice warehouse is guarded by enemies and has a lighted area (vision cone/radius).
+Entering a lighted area triggers enemy aggression.
+
+Warehouse 1:
+Light radius: 6 tiles
+
+Enemies chase and shoot only when the player enters the lit area.
+
+If the player leaves the light, enemies stop chasing.
+
+Warehouse 2:
+Light radius: 8 tiles
+
+Enemies chase and shoot when the player enters the lit area.
+
+Enemies will continue chasing even after the player leaves the light.
+
+Player can escape if:
+
+They keep a large enough distance.
+
+They hide in bushes or haystacks.
+
+However, if the distance is too short (e.g., less than 3 tiles), enemies will spray bullets into the bush and keep chasing.
+
+Note: Enemies in warehouse 1 and 2 are the same, only warehouse 2 has more of them. Player is initially faster than enemies.
+
+Warehouse 3:
+Light radius: 12 tiles
+
+Enemies chase and shoot when the player enters the lit area, and continue chasing outside of it.
+
+*Note: This is the final round, so enemies are the strongest:
+
+Tankier (can take more bullets),
+
+Deal more damage,
+
+Move as fast as the player.*
