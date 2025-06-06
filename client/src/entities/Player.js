@@ -7,8 +7,32 @@ export class Player extends Phaser.Physics.Matter.Sprite {
         } else if (chapter === 3) {
             initialTexture = 'player_ch3_down_1';
         } else {
-            initialTexture = 'player_down_1';
+            initialTexture = 'player_ch3_down_1';
         }
+        
+        // Debug: Check if the texture exists
+        console.log(`🎭 Player constructor - Chapter: ${chapter}, Initial texture: ${initialTexture}`);
+        console.log(`🎭 Texture exists: ${scene.textures.exists(initialTexture)}`);
+        
+        // Fallback if texture doesn't exist - Chapter 3 should NOT fallback to Chapter 1 textures
+        if (!scene.textures.exists(initialTexture)) {
+            console.warn(`⚠️ Texture ${initialTexture} not found`);
+            
+            if (chapter === 3) {
+                console.error(`❌ Chapter 3 textures not loaded! This should not happen.`);
+                // Force create a basic texture so the game doesn't crash
+                const tempGraphics = scene.add.graphics();
+                tempGraphics.fillStyle(0xff0000); // Red color to make it obvious
+                tempGraphics.fillRect(0, 0, 32, 32);
+                tempGraphics.generateTexture('temp_ch3_error', 32, 32);
+                tempGraphics.destroy();
+                initialTexture = 'temp_ch3_error';
+            } else {
+                console.warn(`🔄 Will attempt to fix texture after scene creation`);
+                initialTexture = 'player_down_3';
+            }
+        }
+        
         super(scene.matter.world, x, y, initialTexture); // Start with down-facing idle frame
         
         // Add to scene
@@ -66,7 +90,48 @@ export class Player extends Phaser.Physics.Matter.Sprite {
         // Create animations
         this.createAnimations();
         
-        console.log('Player created at', x, y);
+        console.log(`Player created at ${x}, ${y} for Chapter ${chapter} using texture: ${initialTexture}`);
+    }
+
+    // Method to fix the player texture when the correct assets are available
+    fixChapterTexture() {
+        let correctTexture;
+        if (this.chapter === 2) {
+            correctTexture = 'player_ch2_down_1';
+        } else if (this.chapter === 3) {
+            correctTexture = 'player_ch3_down_1';
+        } else {
+            correctTexture = 'player_down_1';
+        }
+
+        console.log(`🔧 Attempting to fix player texture for chapter ${this.chapter}: ${correctTexture}`);
+        
+        if (this.scene.textures.exists(correctTexture) && this.texture.key !== correctTexture) {
+            console.log(`✅ Fixing player texture from ${this.texture.key} to ${correctTexture}`);
+            this.setTexture(correctTexture);
+            
+            // Stop current animation and recreate for correct chapter
+            this.stop();
+            this.createAnimations();
+            
+            // Set to idle animation for the correct chapter
+            let idleAnim;
+            if (this.chapter === 2) {
+                idleAnim = 'player_ch2_idle_down';
+            } else if (this.chapter === 3) {
+                idleAnim = 'player_ch3_idle_down';
+            } else {
+                idleAnim = 'player_idle_down';
+            }
+            
+            if (this.scene.anims.exists(idleAnim)) {
+                this.play(idleAnim);
+            }
+            
+            return true;
+        }
+        
+        return false;
     }
 
     createPlayerIndicator() {
@@ -112,6 +177,8 @@ export class Player extends Phaser.Physics.Matter.Sprite {
             prefix = 'player_';
             animPrefix = 'player_';
         }
+        
+        console.log(`Creating animations for Chapter ${this.chapter} using prefix: ${prefix}`);
         
         // Check if required textures are loaded
         const requiredTextures = [

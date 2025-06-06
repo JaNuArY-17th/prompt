@@ -58,7 +58,7 @@ export class Granary extends Phaser.Physics.Matter.Sprite {
         // Create a target symbol above granary
         this.indicator = this.scene.add.text(this.x, this.y - 70, '⚠', {
             fontSize: '24px',
-            fontFamily: 'Arial',
+            fontFamily: 'VT323',
             color: '#ff0000'
         });
         this.indicator.setOrigin(0.5);

@@ -49,6 +49,38 @@ export class Chapter3Scene extends Phaser.Scene {
         this.tileSystem = new TileSystem(this);
         this.performanceOptimizer = new PerformanceOptimizer(this);
         
+        // Override getObjectives method for Chapter 3
+        this.tileSystem.getObjectives = () => {
+            const destroyedRadarTowers = this.tileSystem.radarTowers ? this.tileSystem.radarTowers.filter(tower => 
+                tower.destroyed || tower.health <= 0
+            ).length : 0;
+            
+            const colonelDefeated = !this.commandingColonel || !this.commandingColonel.active || this.commandingColonel.health <= 0;
+            
+            return {
+                mainObjective: {
+                    description: "Destroy 2 radar towers",
+                    progress: destroyedRadarTowers,
+                    total: 2, // Only the 2 radar towers
+                    completed: destroyedRadarTowers >= 2
+                },
+                sideObjectives: [
+                    {
+                        description: "Eliminate the Commanding Colonel",
+                        progress: colonelDefeated ? 1 : 0,
+                        total: 1,
+                        completed: colonelDefeated
+                    },
+                    {
+                        description: "Kill enemies",
+                        progress: this.tileSystem.killedEnemies,
+                        total: 200,
+                        completed: this.tileSystem.killedEnemies >= 200
+                    }
+                ]
+            };
+        };
+        
         // Setup shooting configuration
         this.setupShootingSystem();
         
@@ -60,9 +92,67 @@ export class Chapter3Scene extends Phaser.Scene {
         console.log('Chapter 3 - Player starting position:', this.startPos);
         console.log('World bounds:', this.matter.world.bounds);
         console.log('Camera bounds:', this.cameras.main.bounds);
-        this.player = new Player(this, this.startPos.x, this.startPos.y, 3); // Chapter 3
-        this.gameObjects.push(this.player);
         
+        // Ensure Chapter 3 assets are loaded before creating player
+        this.ensureChapter3AssetsLoaded(() => {
+            // Create player with Chapter 3 specific assets
+            this.player = new Player(this, this.startPos.x, this.startPos.y, 3); // Chapter 3
+            this.gameObjects.push(this.player);
+            
+            console.log(`🎭 Chapter 3 player created with texture: ${this.player.texture.key}`);
+            
+            // Force Chapter 3 texture after player creation
+            this.forceChapter3PlayerTexture();
+            
+            // Continue with the rest of the scene setup
+            this.continueSceneSetup();
+        });
+        
+
+    }
+
+    createWorld() {
+        // Generate and render the tilemap with village-jungle mix theme
+        this.tileSystem.generateMap('village_jungle_mix');
+        this.tileSystem.renderMap();
+    }
+
+    ensureChapter3AssetsLoaded(callback) {
+        console.log('🎭 Ensuring Chapter 3 assets are loaded...');
+        
+        // Check if Chapter 3 textures exist
+        const chapter3Texture = 'player_ch3_down_1';
+        if (this.textures.exists(chapter3Texture)) {
+            console.log('✅ Chapter 3 assets already loaded');
+            callback();
+            return;
+        }
+        
+        console.log('🔄 Chapter 3 assets not found, force loading...');
+        
+        // Force load Chapter 3 assets
+        const directions = ['up', 'down', 'left', 'right'];
+        const frames = [1, 2, 3, 4];
+        
+        directions.forEach(direction => {
+            frames.forEach(frame => {
+                const key = `player_ch3_${direction}_${frame}`;
+                const path = `assets/chapter1-main/${direction}-${frame}.png`;
+                this.load.image(key, path);
+            });
+        });
+        
+        this.load.once('complete', () => {
+            console.log('✅ Chapter 3 assets loaded successfully');
+            callback();
+        });
+        
+        this.load.start();
+    }
+
+
+
+    continueSceneSetup() {
         // Debug: Check player position and visibility
         console.log('Player created:', this.player);
         console.log('Player position:', this.player.x, this.player.y);
@@ -109,10 +199,18 @@ export class Chapter3Scene extends Phaser.Scene {
         console.log('Chapter3Scene created successfully with tilemap');
     }
 
-    createWorld() {
-        // Generate and render the tilemap with village-jungle mix theme
-        this.tileSystem.generateMap('village_jungle_mix');
-        this.tileSystem.renderMap();
+    forceChapter3PlayerTexture() {
+        if (!this.player) return;
+        
+        console.log(`🎭 Attempting to force Chapter 3 texture...`);
+        
+        // Try using the fixChapterTexture method first
+        if (this.player.fixChapterTexture()) {
+            console.log(`✅ Successfully fixed Chapter 3 texture using fixChapterTexture method`);
+            return;
+        }
+        
+        console.log(`🎭 Chapter 3 texture verification complete`);
     }
 
     resetPlayerPosition() {
@@ -170,12 +268,12 @@ export class Chapter3Scene extends Phaser.Scene {
         
         if (this.tileSystem && this.tileSystem.radarTowers) {
             this.tileSystem.radarTowers.forEach((radarTowerData, towerIndex) => {
-                // Number of guards based on radar tower (even more guards than warehouses)
+                // Number of guards based on radar tower (HEAVILY GUARDED)
                 let guardCount;
                 switch (radarTowerData.id) {
-                    case 'radar_tower_1': guardCount = 30; break;  // First radar tower: 30 guards
-                    case 'radar_tower_2': guardCount = 40; break;  // Second radar tower: 40 guards
-                    default: guardCount = 30;
+                    case 'radar_tower_1': guardCount = 50; break;  // First radar tower: 50 guards
+                    case 'radar_tower_2': guardCount = 60; break;  // Second radar tower: 60 guards
+                    default: guardCount = 50;
                 }
                 
                 // Create guards around each radar tower in wide open areas
@@ -237,7 +335,7 @@ export class Chapter3Scene extends Phaser.Scene {
     createColonelGuards() {
         // Create elite guards around the commanding colonel
         if (this.commandingColonel) {
-            const eliteGuardCount = 15; // 15 elite guards around the colonel
+            const eliteGuardCount = 30; // 30 elite guards around the colonel
             
             for (let guardIndex = 0; guardIndex < eliteGuardCount; guardIndex++) {
                 let guardPlaced = false;
@@ -267,7 +365,7 @@ export class Chapter3Scene extends Phaser.Scene {
     
     createScatteredEnemies() {
         // Add scattered patrol enemies with more lenient spawning rules
-        const scatteredEnemyCount = 80; // Add 80 scattered enemies
+        const scatteredEnemyCount = 120; // Add 120 scattered enemies
         let scatteredCreated = 0;
         
         for (let i = 0; i < scatteredEnemyCount; i++) {
@@ -352,8 +450,8 @@ export class Chapter3Scene extends Phaser.Scene {
     }
 
     createHostageGuards() {
-        // Create guards specifically for hostages - less guards than previous chapters
-        const hostageGuardCount = 30; // 30 hostage guards total
+        // Create guards specifically for hostages - more guards for Chapter 3
+        const hostageGuardCount = 50; // 50 hostage guards total
         let hostageGuardsCreated = 0;
         
         for (let i = 0; i < hostageGuardCount; i++) {
@@ -395,13 +493,28 @@ export class Chapter3Scene extends Phaser.Scene {
             this.tileSystem.generateMap('village_jungle_mix');
         }
         
-        // Create 2 radar towers instead of 3 warehouses
+        // Create 2 heavily guarded radar towers and 1 boss warehouse
         this.tileSystem.radarTowers = [];
+        this.tileSystem.warehouses = []; // For the boss warehouse
         
-        // Radar Tower 1 - Early in the path (village area)
-        const radarTower1Pos = this.tileSystem.findSuitableObjectPosition(150, 50); // Earlier position
+        // Radar Tower 1 - Early in the path (village area) - HEAVILY GUARDED
+        const radarTower1Pos = this.tileSystem.findSuitableObjectPosition(150, 50);
         if (radarTower1Pos) {
-            const radarTower1 = new Granary(this, radarTower1Pos.worldX, radarTower1Pos.worldY, 'radar_tower_1');
+            // Create radar tower using actual radar sprite
+            const radarTower1 = this.add.image(radarTower1Pos.worldX, radarTower1Pos.worldY, 'radar_tower');
+            radarTower1.setScale(1.2); // Slightly larger
+            radarTower1.setDepth(20000 + radarTower1Pos.worldY); // High depth like warehouses
+            
+            // Add health properties to the sprite
+            radarTower1.health = 150; // More health than regular warehouses
+            radarTower1.maxHealth = 150;
+            radarTower1.destroyed = false;
+            radarTower1.id = 'radar_tower_1';
+            
+            // Add to radar towers group (create if doesn't exist)
+            if (!this.radarTowers) {
+                this.radarTowers = this.add.group();
+            }
             this.radarTowers.add(radarTower1);
             this.gameObjects.push(radarTower1);
             
@@ -411,17 +524,35 @@ export class Chapter3Scene extends Phaser.Scene {
                 y: radarTower1Pos.tileY,
                 worldX: radarTower1Pos.worldX,
                 worldY: radarTower1Pos.worldY,
-                lightRadius: 25,
-                entity: radarTower1
+                lightRadius: 35, // Larger detection radius
+                entity: radarTower1,
+                health: 150,
+                maxHealth: 150,
+                destroyed: false,
+                sprite: radarTower1
             });
             
-            console.log('Created Radar Tower 1 at:', radarTower1Pos);
+            console.log('Created HEAVILY GUARDED Radar Tower 1 at:', radarTower1Pos);
+            
+            // Add supporting radar infrastructure around tower 1
+            this.createRadarInfrastructure(radarTower1Pos.worldX, radarTower1Pos.worldY, 'tower_1');
         }
         
-        // Radar Tower 2 - Later in the path (jungle area)
-        const radarTower2Pos = this.tileSystem.findSuitableObjectPosition(450, 100); // Later position
+        // Radar Tower 2 - Later in the path (jungle area) - HEAVILY GUARDED
+        const radarTower2Pos = this.tileSystem.findSuitableObjectPosition(450, 100);
         if (radarTower2Pos) {
-            const radarTower2 = new Granary(this, radarTower2Pos.worldX, radarTower2Pos.worldY, 'radar_tower_2');
+            // Create radar tower using actual radar sprite
+            const radarTower2 = this.add.image(radarTower2Pos.worldX, radarTower2Pos.worldY, 'radar_tower');
+            radarTower2.setScale(1.3); // Even larger
+            radarTower2.setDepth(20000 + radarTower2Pos.worldY); // High depth like warehouses
+            radarTower2.setTint(0x8888ff); // Light blue tint for stronger tower
+            
+            // Add health properties to the sprite
+            radarTower2.health = 200; // Even more health
+            radarTower2.maxHealth = 200;
+            radarTower2.destroyed = false;
+            radarTower2.id = 'radar_tower_2';
+            
             this.radarTowers.add(radarTower2);
             this.gameObjects.push(radarTower2);
             
@@ -431,33 +562,174 @@ export class Chapter3Scene extends Phaser.Scene {
                 y: radarTower2Pos.tileY,
                 worldX: radarTower2Pos.worldX,
                 worldY: radarTower2Pos.worldY,
-                lightRadius: 30,
-                entity: radarTower2
+                lightRadius: 40, // Even larger detection radius
+                entity: radarTower2,
+                health: 200,
+                maxHealth: 200,
+                destroyed: false,
+                sprite: radarTower2
             });
             
-            console.log('Created Radar Tower 2 at:', radarTower2Pos);
+            console.log('Created HEAVILY GUARDED Radar Tower 2 at:', radarTower2Pos);
+            
+            // Add supporting radar infrastructure around tower 2
+            this.createRadarInfrastructure(radarTower2Pos.worldX, radarTower2Pos.worldY, 'tower_2');
         }
         
-        // Create the Commanding Colonel boss at the end of the path (jungle area)
-        const colonelPos = this.tileSystem.findSuitableObjectPosition(550, 150); // End position
-        if (colonelPos) {
-            // Create the commanding colonel as a super strong tank enemy
-            this.commandingColonel = new Enemy(this, colonelPos.worldX, colonelPos.worldY, 'tank');
-            this.commandingColonel.health = 500; // Much more health than regular enemies
+        // Create the Boss Warehouse with Commanding Colonel - FINAL BOSS FIGHT
+        const bossWarehousePos = this.tileSystem.findSuitableObjectPosition(550, 150);
+        if (bossWarehousePos) {
+            // Create the boss warehouse (command center)
+            const bossWarehouse = new Granary(this, bossWarehousePos.worldX, bossWarehousePos.worldY, 'boss_command_center');
+            bossWarehouse.health = 300; // Very high health
+            bossWarehouse.maxHealth = 300;
+            bossWarehouse.setScale(1.5); // Much larger
+            bossWarehouse.setTint(0xff0000); // Red tint for boss location
+            this.granaries.add(bossWarehouse);
+            this.gameObjects.push(bossWarehouse);
+            
+            this.tileSystem.warehouses.push({
+                id: 'boss_command_center',
+                x: bossWarehousePos.tileX,
+                y: bossWarehousePos.tileY,
+                worldX: bossWarehousePos.worldX,
+                worldY: bossWarehousePos.worldY,
+                lightRadius: 50, // Massive detection radius
+                entity: bossWarehouse,
+                health: 300,
+                maxHealth: 300,
+                destroyed: false,
+                sprite: bossWarehouse
+            });
+            
+            // Create the Commanding Colonel boss INSIDE the warehouse area
+            const colonelOffsetX = bossWarehousePos.worldX + (Math.random() - 0.5) * 100;
+            const colonelOffsetY = bossWarehousePos.worldY + (Math.random() - 0.5) * 100;
+            
+            this.commandingColonel = new Enemy(this, colonelOffsetX, colonelOffsetY, 'tank');
+            this.commandingColonel.health = 500; // Massive health
             this.commandingColonel.maxHealth = 500;
-            this.commandingColonel.damage = 50; // Much more damage
-            this.commandingColonel.setScale(1.5); // Larger size
-            this.commandingColonel.setTint(0xff0000); // Red tint to distinguish as boss
-            this.commandingColonel.tileX = colonelPos.tileX;
-            this.commandingColonel.tileY = colonelPos.tileY;
+            this.commandingColonel.damage = 50; // High damage
+            this.commandingColonel.setScale(1.8); // Very large size
+            this.commandingColonel.setTint(0xff0000); // Red tint for boss
+            this.commandingColonel.tileX = bossWarehousePos.tileX;
+            this.commandingColonel.tileY = bossWarehousePos.tileY;
             
             this.enemies.add(this.commandingColonel);
             this.gameObjects.push(this.commandingColonel);
             
-            console.log('Created Commanding Colonel boss at:', colonelPos);
+            console.log('Created Boss Command Center with Commanding Colonel at:', bossWarehousePos);
         }
         
-        console.log(`Chapter 3: Created ${this.tileSystem.radarTowers.length} radar towers and commanding colonel`);
+        // Create additional military buildings around the map
+        this.createMilitaryBuildings();
+        
+        // Preload radar tower and boss areas for dev teleportation
+        this.tileSystem.preloadRadarTowerAreas();
+        
+        console.log(`Chapter 3: Created ${this.tileSystem.radarTowers.length} radar towers, 1 boss warehouse, and commanding colonel`);
+    }
+
+    createRadarInfrastructure(centerX, centerY, towerId) {
+        // Create supporting infrastructure around radar towers
+        const infrastructureItems = [
+            { type: 'communication_antenna', distance: 80, angle: 0 },
+            { type: 'control_bunker', distance: 100, angle: 90 },
+            { type: 'power_generator', distance: 90, angle: 180 },
+            { type: 'guard_post', distance: 110, angle: 270 },
+            { type: 'radar_dish_small', distance: 60, angle: 45 },
+            { type: 'radar_dish_small', distance: 60, angle: 135 },
+            { type: 'fence_section', distance: 120, angle: 225 },
+            { type: 'fence_section', distance: 120, angle: 315 }
+        ];
+
+        infrastructureItems.forEach((item, index) => {
+            const angleRad = (item.angle * Math.PI) / 180;
+            const x = centerX + Math.cos(angleRad) * item.distance;
+            const y = centerY + Math.sin(angleRad) * item.distance;
+
+            let sprite;
+            let scale = 0.6; // Smaller than main radar tower
+            let tint = 0xcccccc; // Light gray for infrastructure
+
+            switch (item.type) {
+                case 'communication_antenna':
+                case 'radar_dish_small':
+                    // Use smaller radar sprites for dishes and antennas
+                    sprite = this.add.image(x, y, 'radar_tower');
+                    scale = 0.4;
+                    tint = 0xaaaaaa;
+                    break;
+                case 'control_bunker':
+                case 'guard_post':
+                    // Use house sprites for bunkers and guard posts
+                    sprite = this.add.image(x, y, 'house-1');
+                    scale = 0.7;
+                    tint = 0x666666; // Darker gray for military buildings
+                    break;
+                case 'power_generator':
+                    // Use warehouse sprite for generator
+                    sprite = this.add.image(x, y, 'warehouse');
+                    scale = 0.5;
+                    tint = 0x444444; // Dark gray for machinery
+                    break;
+                case 'fence_section':
+                    // Use stone sprites for fence sections
+                    sprite = this.add.image(x, y, 'stone_medium');
+                    scale = 0.8;
+                    tint = 0x888888; // Medium gray for fencing
+                    break;
+                default:
+                    sprite = this.add.image(x, y, 'stone_small');
+                    break;
+            }
+
+            if (sprite) {
+                sprite.setScale(scale);
+                sprite.setTint(tint);
+                sprite.setDepth(15000 + y); // Lower depth than main radar tower
+                sprite.setAlpha(0.8); // Slightly transparent to show they're secondary
+                
+                // Add to game objects for cleanup
+                this.gameObjects.push(sprite);
+                
+                console.log(`Created radar infrastructure: ${item.type} for ${towerId} at (${Math.round(x)}, ${Math.round(y)})`);
+            }
+        });
+
+        console.log(`✅ Radar infrastructure created around ${towerId}`);
+    }
+    
+    createMilitaryBuildings() {
+        // Add more military buildings throughout the map for immersion
+        const buildingTypes = ['barracks', 'watchtower', 'supply_depot', 'communication_hub'];
+        const buildingCount = 8; // Add 8 additional buildings
+        
+        for (let i = 0; i < buildingCount; i++) {
+            // Try to find a good position
+            for (let attempt = 0; attempt < 30; attempt++) {
+                const randomX = Math.floor(Math.random() * this.tileSystem.mapWidth);
+                const randomY = Math.floor(Math.random() * this.tileSystem.mapHeight);
+                
+                if (this.isWalkableArea(randomX, randomY, 3)) {
+                    const worldPos = this.tileSystem.getWorldPosition(randomX, randomY);
+                    const buildingType = buildingTypes[Math.floor(Math.random() * buildingTypes.length)];
+                    
+                    // Create building using Granary entity with different properties
+                    const building = new Granary(this, worldPos.x, worldPos.y, buildingType);
+                    building.health = 75; // Less health than main objectives
+                    building.maxHealth = 75;
+                    building.setScale(0.8); // Smaller than main objectives
+                    building.setTint(0x888888); // Gray tint for secondary buildings
+                    
+                    this.granaries.add(building);
+                    this.gameObjects.push(building);
+                    
+                    console.log(`Created military building (${buildingType}) at (${randomX}, ${randomY})`);
+                    break;
+                }
+            }
+        }
     }
 
     createImprovedPuzzleBoards() {
@@ -467,15 +739,20 @@ export class Chapter3Scene extends Phaser.Scene {
     }
 
     setupCamera() {
-        // Set up camera to follow player with smooth movement
-        this.cameras.main.setBounds(-24000, -6000, 48000, 36000);
-        this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
-        this.cameras.main.setZoom(0.8); // Slightly zoomed out for better visibility
+        // Follow player with smoother camera
+        this.cameras.main.startFollow(this.player, true, 0.08, 0.08); // Slightly faster follow for smoothness
+        this.cameras.main.setZoom(1.587); // Increased zoom by 15% (1.38 × 1.15 = 1.587)
         
-        // Set camera bounds to prevent showing empty space
+        // Set camera bounds to match isometric world bounds
+        this.cameras.main.setBounds(-24000, -6000, 48000, 36000);
+        
+        // Force camera to center on player initially
+        this.cameras.main.centerOn(this.player.x, this.player.y);
+        
+        // Enable camera smoothing
         this.cameras.main.setLerp(0.1, 0.1);
         
-        console.log('Chapter 3 camera setup complete');
+        console.log('Camera setup - following player at:', this.player.x, this.player.y);
     }
 
     setupCollisions() {
@@ -484,12 +761,13 @@ export class Chapter3Scene extends Phaser.Scene {
     }
 
     update(time, delta) {
-        // Performance optimization: update at different frequencies
+        // Performance optimization: Use slower update frequency for some systems
         this.updateCounter++;
+        const isSlowUpdate = this.updateCounter % this.slowUpdateInterval === 0;
         
-        // Update input system every frame
-        if (this.inputSystem) {
-            this.inputSystem.update();
+        // Update performance optimizer first
+        if (this.performanceOptimizer) {
+            this.performanceOptimizer.update();
         }
         
         // Update player every frame
@@ -497,39 +775,156 @@ export class Chapter3Scene extends Phaser.Scene {
             this.player.update(time, delta);
         }
         
-        // Update other game objects at reduced frequency
-        if (this.updateCounter % this.slowUpdateInterval === 0) {
-            // Update enemies
-            this.enemies.children.entries.forEach(enemy => {
-                if (enemy && enemy.update) {
-                    enemy.update(time, delta);
+        // Update enemies less frequently for performance
+        if (isSlowUpdate && this.gameObjects) {
+            this.gameObjects.forEach(obj => {
+                if (obj && obj !== this.player && obj.update && obj.active) {
+                    try {
+                        obj.update(time, delta);
+                    } catch (error) {
+                        console.warn('Error updating game object:', error);
+                        // Remove problematic object from gameObjects array
+                        const index = this.gameObjects.indexOf(obj);
+                        if (index > -1) {
+                            this.gameObjects.splice(index, 1);
+                        }
+                    }
                 }
             });
-            
-            // Update performance optimizer
-            if (this.performanceOptimizer) {
-                this.performanceOptimizer.optimizeObjects(this.gameObjects);
+        }
+        
+        // Simple bullet updates
+        if (this.bullets && this.bullets.children && this.bullets.children.entries) {
+            this.bullets.children.entries.forEach(bullet => {
+            if (bullet && bullet.active) {
+                // Move bullet
+                bullet.x += bullet.velocityX * delta / 1000;
+                bullet.y += bullet.velocityY * delta / 1000;
+                bullet.timeAlive += delta;
+
+                // Remove if out of range or too old
+                const distance = Phaser.Math.Distance.Between(bullet.startX, bullet.startY, bullet.x, bullet.y);
+                if (distance > this.shootingConfig.bulletRange || bullet.timeAlive > 5000) {
+                    bullet.destroy();
+                    return;
+                }
+
+                // Check collisions with enemies (for player bullets)
+                if (!bullet.isEnemy && this.enemies && this.enemies.children && this.enemies.children.entries) {
+                    this.enemies.children.entries.forEach(enemy => {
+                        if (enemy && enemy.active && enemy.health > 0) {
+                            const hitDistance = Phaser.Math.Distance.Between(bullet.x, bullet.y, enemy.x, enemy.y);
+                            if (hitDistance < 25) {
+                                // Store enemy health before damage to check if it was killed
+                                const enemyHealthBefore = enemy.health;
+                                enemy.takeDamage(bullet.damage);
+                                this.createSimpleHitEffect(bullet.x, bullet.y);
+                                
+                                // Only give bullets if enemy was actually killed (health went to 0 or below)
+                                if (enemyHealthBefore > 0 && enemy.health <= 0) {
+                                    this.addBulletsToInventory(this.shootingConfig.bulletsPerKill);
+                                }
+                                
+                                bullet.destroy();
+                            }
+                        }
+                    });
+                }
+
+                // Check collisions with radar towers (for player bullets only)
+                if (!bullet.isEnemy && this.tileSystem && this.tileSystem.radarTowers) {
+                    this.tileSystem.radarTowers.forEach(radarTower => {
+                        if (radarTower.entity && !radarTower.destroyed && radarTower.health > 0) {
+                            const hitDistance = Phaser.Math.Distance.Between(bullet.x, bullet.y, radarTower.entity.x, radarTower.entity.y);
+                            if (hitDistance < 40) { // Larger hitbox for radar towers
+                                // Manual damage calculation since radar towers are now image sprites
+                                radarTower.health -= bullet.damage;
+                                radarTower.entity.health = radarTower.health; // Keep entity health in sync
+                                
+                                // Visual damage effect - tint darker as health decreases
+                                const healthPercent = radarTower.health / radarTower.maxHealth;
+                                if (healthPercent <= 0.3) {
+                                    radarTower.entity.setTint(0xff4444); // Red tint when critically damaged
+                                } else if (healthPercent <= 0.6) {
+                                    radarTower.entity.setTint(0xffaa44); // Orange tint when moderately damaged
+                                }
+                                
+                                if (radarTower.health <= 0) {
+                                    radarTower.destroyed = true;
+                                    radarTower.entity.setTint(0x444444); // Dark gray when destroyed
+                                    radarTower.entity.setAlpha(0.5); // Semi-transparent when destroyed
+                                    console.log(`📡 Radar Tower ${radarTower.id} destroyed!`);
+                                }
+                                
+                                this.createSimpleHitEffect(bullet.x, bullet.y);
+                                bullet.destroy();
+                            }
+                        }
+                    });
+                }
+
+                // Check collisions with boss warehouse (for player bullets only)
+                if (!bullet.isEnemy && this.tileSystem && this.tileSystem.warehouses) {
+                    this.tileSystem.warehouses.forEach(warehouse => {
+                        if (warehouse.entity && !warehouse.destroyed && warehouse.health > 0) {
+                            const hitDistance = Phaser.Math.Distance.Between(bullet.x, bullet.y, warehouse.entity.x, warehouse.entity.y);
+                            if (hitDistance < 50) { // Large hitbox for boss warehouse
+                                warehouse.entity.takeDamage(bullet.damage);
+                                warehouse.health = warehouse.entity.health;
+                                if (warehouse.health <= 0) {
+                                    warehouse.destroyed = true;
+                                }
+                                this.createSimpleHitEffect(bullet.x, bullet.y);
+                                bullet.destroy();
+                            }
+                        }
+                    });
+                }
+
+                // Check collisions with commanding colonel (for player bullets only)
+                if (!bullet.isEnemy && this.commandingColonel && this.commandingColonel.active && this.commandingColonel.health > 0) {
+                    const hitDistance = Phaser.Math.Distance.Between(bullet.x, bullet.y, this.commandingColonel.x, this.commandingColonel.y);
+                    if (hitDistance < 30) { // Hitbox for commanding colonel
+                        this.commandingColonel.takeDamage(bullet.damage);
+                        this.createSimpleHitEffect(bullet.x, bullet.y);
+                        bullet.destroy();
+                        
+                        // Give extra bullets for hitting the colonel
+                        this.addBulletsToInventory(this.shootingConfig.bulletsPerKill * 2);
+                    }
+                }
+
+                // Check collisions with player (for enemy bullets)
+                if (bullet.isEnemy && this.player && this.player.active) {
+                    const hitDistance = Phaser.Math.Distance.Between(bullet.x, bullet.y, this.player.x, this.player.y);
+                    if (hitDistance < 25) {
+                        this.player.takeDamage(bullet.damage);
+                        this.createSimpleHitEffect(bullet.x, bullet.y);
+                        bullet.destroy();
+                    }
+                }
             }
+        });
         }
         
-        // Check for game completion every 30 frames
-        if (this.updateCounter % 30 === 0) {
-            this.checkChapter3Completion();
+        // Update input system
+        if (this.inputSystem) {
+            this.inputSystem.update();
         }
         
-        // Update UI every 10 frames
-        if (this.updateCounter % 10 === 0) {
+        // Update tile system visibility less frequently
+        if (isSlowUpdate && this.tileSystem) {
+            this.tileSystem.updateVisibleTiles();
+        }
+        
+        // Update UI less frequently
+        if (isSlowUpdate) {
             this.updateUI();
         }
         
-        // Clean up bullets that are off-screen
-        if (this.updateCounter % 60 === 0) {
-            this.cleanupBullets();
-        }
-        
-        // Handle shooting cooldown
-        if (this.shootingCooldown > 0) {
-            this.shootingCooldown -= delta;
+        // Check for Chapter 3 completion every 30 frames
+        if (this.updateCounter % 30 === 0) {
+            this.checkChapter3Completion();
         }
     }
 
@@ -537,17 +932,17 @@ export class Chapter3Scene extends Phaser.Scene {
         if (!this.tileSystem.radarTowers) return;
         
         // Check if all radar towers are destroyed
-        const destroyedRadarTowers = this.tileSystem.radarTowers.filter(tower => 
-            !tower.entity || !tower.entity.active || tower.entity.health <= 0
-        ).length;
+        const destroyedRadarTowers = this.tileSystem.radarTowers ? this.tileSystem.radarTowers.filter(tower => 
+            tower.destroyed || tower.health <= 0
+        ).length : 0;
         
         // Check if commanding colonel is defeated
         const colonelDefeated = !this.commandingColonel || !this.commandingColonel.active || this.commandingColonel.health <= 0;
         
-        const totalRadarTowers = this.tileSystem.radarTowers.length;
+        const totalRadarTowers = this.tileSystem.radarTowers ? this.tileSystem.radarTowers.length : 0;
         
         // Chapter 3 is complete when all radar towers are destroyed AND colonel is defeated
-        if (destroyedRadarTowers === totalRadarTowers && colonelDefeated) {
+        if (destroyedRadarTowers >= 2 && colonelDefeated) {
             console.log('🎉 Chapter 3 completed! All radar towers destroyed and commanding colonel defeated!');
             this.handleChapterComplete();
         } else {
@@ -577,52 +972,72 @@ export class Chapter3Scene extends Phaser.Scene {
     }
 
     handleChapterComplete() {
-        // Mark Chapter 3 as completed
-        if (this.scene.scene.game.chapterManager) {
-            this.scene.scene.game.chapterManager.completeChapter(3);
-        }
+        console.log('🎉 Chapter 3 completed! All radar towers and boss warehouse destroyed, commanding colonel defeated!');
         
-        // Show completion message and return to menu
-        this.time.delayedCall(2000, () => {
-            this.scene.start('MainMenuScene');
+        // Emit victory event for UIScene to handle
+        this.events.emit('victoryAchieved', {
+            chapter: 3,
+            description: 'Final assault completed successfully!',
+            objectives: {
+                radarTowersDestroyed: this.tileSystem.radarTowers.filter(tower => tower.destroyed).length,
+                bossDefeated: !this.commandingColonel || this.commandingColonel.health <= 0
+            }
         });
+        
+        // Mark Chapter 3 as completed
+        if (this.game.chapterManager) {
+            this.game.chapterManager.completeChapter(3);
+            this.game.chapterManager.saveProgress();
+        }
     }
 
     setupShootingSystem() {
-        // Configure shooting system
+        // Shooting specifications
         this.shootingConfig = {
-            maxAmmo: 30,
-            reloadTime: 2000, // 2 seconds
-            shootCooldown: 150 // milliseconds between shots
+            bulletSpeed: 500, // px/s - player bullets
+            enemyBulletSpeed: 200, // px/s - slower enemy bullets
+            bulletRange: 300 , // px (6 tiles)
+            playerDamage: 25,
+            enemyDamage: 15,
+            fireRate: 200, // ms cooldown
+            maxAmmo: 10,
+            reloadTime: 2000, // ms
+            maxInventory: 20,
+            bulletsPerKill: 3
         };
         
+        // Shooting state
+        this.lastShotTime = 0;
         this.currentAmmo = this.shootingConfig.maxAmmo;
+        this.inventoryBullets = 10; // Start with 10 bullets in inventory
         this.isReloading = false;
-        this.shootingCooldown = 0;
-        this.inventoryBullets = 10; // Start with some extra bullets
+        this.reloadStartTime = 0;
         
-        console.log('Chapter 3 shooting system configured');
+        console.log('Shooting system initialized with specifications');
     }
 
     shoot(targetX, targetY) {
-        // Check if we can shoot
-        if (this.shootingCooldown > 0 || this.isReloading || this.currentAmmo <= 0) {
+        // Check if reloading
+        if (this.isReloading) return;
+        
+        // Check ammo
+        if (this.currentAmmo <= 0) {
+            this.startReload();
             return;
         }
         
-        // Create bullet from player position to target
-        this.createSimpleBullet(this.player.x, this.player.y, targetX, targetY, false);
+        // Cooldown check
+        if (this.time.now - this.lastShotTime < this.shootingConfig.fireRate) return;
         
-        // Reduce ammo
+        // Create bullet
+        const bullet = this.createSimpleBullet(this.player.x, this.player.y, targetX, targetY, false);
+        
+        // Update ammo and shooting state
         this.currentAmmo--;
-        this.shootingCooldown = this.shootingConfig.shootCooldown;
+        this.lastShotTime = this.time.now;
         
-        // Auto-reload if out of ammo
-        if (this.currentAmmo <= 0 && this.inventoryBullets > 0) {
-            this.startReload();
-        }
-        
-        console.log(`Shot fired! Ammo: ${this.currentAmmo}/${this.shootingConfig.maxAmmo}`);
+        // Update UI
+        this.updateUI();
     }
 
     enemyShoot(enemy, targetX, targetY) {
@@ -631,75 +1046,36 @@ export class Chapter3Scene extends Phaser.Scene {
     }
 
     createSimpleBullet(startX, startY, targetX, targetY, isEnemy) {
-        // Calculate direction and speed
-        const direction = Math.atan2(targetY - startY, targetX - startX);
-        const speed = 800; // pixels per second
-        
-        // Create bullet sprite
+        // Create bullet using the bullet asset
         const bullet = this.add.image(startX, startY, 'bullet');
-        bullet.setScale(0.5);
-        bullet.setRotation(direction);
-        bullet.setDepth(5000);
+        bullet.setScale(0.05); // Small scale to match environment
+        bullet.setDepth(1000); // High depth for visibility
         
-        // Add physics body
-        this.matter.add.gameObject(bullet, {
-            isSensor: true,
-            ignoreGravity: true
-        });
+        // Set bullet start position for range calculation
+        bullet.startX = startX;
+        bullet.startY = startY;
+        bullet.timeAlive = 0;
         
-        // Set velocity
-        const velocityX = Math.cos(direction) * speed;
-        const velocityY = Math.sin(direction) * speed;
-        bullet.setVelocity(velocityX / 60, velocityY / 60); // Convert to per-frame
+        // Calculate direction and velocity
+        const distance = Phaser.Math.Distance.Between(startX, startY, targetX, targetY);
+        const direction = Math.atan2(targetY - startY, targetX - startX);
         
-        // Add to bullets group
-        this.bullets.add(bullet);
+        // Set speed based on bullet type
+        const speed = isEnemy ? this.shootingConfig.enemyBulletSpeed : this.shootingConfig.bulletSpeed;
+        bullet.velocityX = Math.cos(direction) * speed;
+        bullet.velocityY = Math.sin(direction) * speed;
         
         // Set bullet properties
         bullet.isEnemy = isEnemy;
-        bullet.damage = isEnemy ? 20 : 25; // Player bullets do more damage
+        bullet.damage = isEnemy ? this.shootingConfig.enemyDamage : this.shootingConfig.playerDamage;
         
-        // Destroy bullet after 3 seconds
-        this.time.delayedCall(3000, () => {
-            if (bullet && bullet.active) {
-                bullet.destroy();
-            }
-        });
+        // Rotate bullet to face direction of travel
+        bullet.setRotation(direction);
         
-        // Handle collisions
-        bullet.setOnCollide((event) => {
-            const { bodyA, bodyB } = event;
-            const bulletBody = bullet.body === bodyA ? bodyA : bodyB;
-            const otherBody = bullet.body === bodyA ? bodyB : bodyA;
-            
-            if (otherBody.gameObject) {
-                const target = otherBody.gameObject;
-                
-                // Check if bullet hit appropriate target
-                if (isEnemy && target === this.player) {
-                    // Enemy bullet hit player
-                    if (target.takeDamage) {
-                        target.takeDamage(bullet.damage);
-                        this.createSimpleHitEffect(bullet.x, bullet.y);
-                        bullet.destroy();
-                    }
-                } else if (!isEnemy && this.enemies.contains(target)) {
-                    // Player bullet hit enemy
-                    if (target.takeDamage) {
-                        target.takeDamage(bullet.damage);
-                        this.createSimpleHitEffect(bullet.x, bullet.y);
-                        bullet.destroy();
-                    }
-                } else if (!isEnemy && this.radarTowers.contains(target)) {
-                    // Player bullet hit radar tower
-                    if (target.takeDamage) {
-                        target.takeDamage(bullet.damage);
-                        this.createSimpleHitEffect(bullet.x, bullet.y);
-                        bullet.destroy();
-                    }
-                }
-            }
-        });
+        // Add to bullets group for tracking
+        this.bullets.add(bullet);
+        
+        return bullet;
     }
 
     createSimpleHitEffect(x, y) {

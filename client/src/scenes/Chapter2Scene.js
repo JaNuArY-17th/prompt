@@ -408,7 +408,7 @@ export class Chapter2Scene extends Phaser.Scene {
         // Create interaction prompt (initially hidden)
         this.interactionPrompt = this.add.text(0, 0, 'Press E to interact with blackboard', {
             fontSize: '14px',
-            fontFamily: 'Arial Bold',
+            fontFamily: 'VT323',
             color: '#ffff00',
             backgroundColor: '#000000',
             padding: { x: 8, y: 4 }

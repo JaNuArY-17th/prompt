@@ -7,6 +7,7 @@ import { Chapter2Scene } from './scenes/Chapter2Scene.js';
 import { Chapter3Scene } from './scenes/Chapter3Scene.js';
 import { UIScene } from './scenes/UIScene.js';
 import { BlackboardPuzzleScene } from './scenes/BlackboardPuzzleScene.js';
+import { VictoryScene } from './scenes/VictoryScene.js';
 import { ChapterManager } from './utils/ChapterManager.js';
 
 
@@ -14,7 +15,7 @@ class Game extends Phaser.Game {
     constructor() {
         const config = {
             ...GameConfig,
-            scene: [PreloadScene, MainMenuScene, GameScene, Chapter2Scene, Chapter3Scene, UIScene, BlackboardPuzzleScene]
+            scene: [PreloadScene, MainMenuScene, GameScene, Chapter2Scene, Chapter3Scene, UIScene, BlackboardPuzzleScene, VictoryScene]
         };
         
         super(config);

@@ -4,7 +4,7 @@ export class ChapterManager {
         this.currentChapter = 1;
         this.chapterData = new Map();
         this.playerProgress = {
-            unlockedChapters: [1], // Player starts with Chapter 1 unlocked
+            unlockedChapters: [1, 2, 3], // DEV: All chapters unlocked for development
             completedChapters: [],
             playerStats: {
                 health: 100,
@@ -55,14 +55,14 @@ export class ChapterManager {
 
         // Chapter 3 Configuration
         this.chapterData.set(3, {
-            name: "CHAPTER 3",
+            name: "CHAPTER 3 - THE FINAL ASSAULT",
             sceneKey: "Chapter3Scene",
-            description: "Destroy 2 radar towers and eliminate the Commanding Colonel",
+            description: "Destroy 2 heavily guarded radar towers, destroy the boss command center, and eliminate the Commanding Colonel",
             objectives: {
-                main: { description: "Destroy 2 radar towers", total: 2 },
+                main: { description: "Destroy 2 radar towers and boss command center", total: 3 },
                 side: [
                     { description: "Eliminate the Commanding Colonel", total: 1 },
-                    { description: "Kill enemies", total: 45 }
+                    { description: "Kill enemies", total: 200 }
                 ]
             },
             mapConfig: {
@@ -99,9 +99,18 @@ export class ChapterManager {
 
     // Start specific chapter
     startChapter(chapterNumber) {
-        if (!this.isChapterUnlocked(chapterNumber)) {
+        // DEV: Check if this is a dev skip (bypass unlock check for development)
+        const isDevSkip = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        
+        if (!this.isChapterUnlocked(chapterNumber) && !isDevSkip) {
             console.warn(`Chapter ${chapterNumber} is not unlocked yet!`);
             return false;
+        }
+        
+        // DEV: Force unlock chapter if dev skip
+        if (isDevSkip && !this.isChapterUnlocked(chapterNumber)) {
+            console.log(`🔧 DEV: Force unlocking Chapter ${chapterNumber}`);
+            this.playerProgress.unlockedChapters.push(chapterNumber);
         }
 
         const chapterData = this.chapterData.get(chapterNumber);

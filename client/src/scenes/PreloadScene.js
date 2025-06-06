@@ -55,30 +55,30 @@ export class PreloadScene extends Phaser.Scene {
     }
 
     loadPlayerAssets() {
-        // Load Chapter 1 player animation frames for all 4 directions
+        // Load Chapter 1 player animation frames for all 4 directions (using chapter3-main assets)
         // Up direction
-        this.load.image('player_up_1', 'assets/chapter1-main/up-1.png');
-        this.load.image('player_up_2', 'assets/chapter1-main/up-2.png');
-        this.load.image('player_up_3', 'assets/chapter1-main/up-3.png');
-        this.load.image('player_up_4', 'assets/chapter1-main/up-4.png');
+        this.load.image('player_up_1', 'assets/chapter3-main/up-1.png');
+        this.load.image('player_up_2', 'assets/chapter3-main/up-2.png');
+        this.load.image('player_up_3', 'assets/chapter3-main/up-3.png');
+        this.load.image('player_up_4', 'assets/chapter3-main/up-4.png');
         
         // Down direction
-        this.load.image('player_down_1', 'assets/chapter1-main/down-1.png');
-        this.load.image('player_down_2', 'assets/chapter1-main/down-2.png');
-        this.load.image('player_down_3', 'assets/chapter1-main/down-3.png');
-        this.load.image('player_down_4', 'assets/chapter1-main/down-4.png');
+        this.load.image('player_down_1', 'assets/chapter3-main/down-1.png');
+        this.load.image('player_down_2', 'assets/chapter3-main/down-2.png');
+        this.load.image('player_down_3', 'assets/chapter3-main/down-3.png');
+        this.load.image('player_down_4', 'assets/chapter3-main/down-4.png');
         
         // Left direction
-        this.load.image('player_left_1', 'assets/chapter1-main/left-1.png');
-        this.load.image('player_left_2', 'assets/chapter1-main/left-2.png');
-        this.load.image('player_left_3', 'assets/chapter1-main/left-3.png');
-        this.load.image('player_left_4', 'assets/chapter1-main/left-4.png');
+        this.load.image('player_left_1', 'assets/chapter3-main/left-1.png');
+        this.load.image('player_left_2', 'assets/chapter3-main/left-2.png');
+        this.load.image('player_left_3', 'assets/chapter3-main/left-3.png');
+        this.load.image('player_left_4', 'assets/chapter3-main/left-4.png');
         
         // Right direction
-        this.load.image('player_right_1', 'assets/chapter1-main/right-1.png');
-        this.load.image('player_right_2', 'assets/chapter1-main/right-2.png');
-        this.load.image('player_right_3', 'assets/chapter1-main/right-3.png');
-        this.load.image('player_right_4', 'assets/chapter1-main/right-4.png');
+        this.load.image('player_right_1', 'assets/chapter3-main/right-1.png');
+        this.load.image('player_right_2', 'assets/chapter3-main/right-2.png');
+        this.load.image('player_right_3', 'assets/chapter3-main/right-3.png');
+        this.load.image('player_right_4', 'assets/chapter3-main/right-4.png');
 
         // Load Chapter 2 player assets (Sister Sáu Nhung)
         // Up direction
@@ -105,30 +105,32 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('player_ch2_right_3', 'assets/chapter2-main/right-3.png');
         this.load.image('player_ch2_right_4', 'assets/chapter2-main/right-4.png');
 
-        // Load Chapter 3 player assets
+        // Load Chapter 3 player assets (using chapter1-main assets)
+        console.log('🎭 Loading Chapter 3 player assets from chapter1-main...');
         // Up direction
-        this.load.image('player_ch3_up_1', 'assets/chapter3-main/up-1.png');
-        this.load.image('player_ch3_up_2', 'assets/chapter3-main/up-2.png');
-        this.load.image('player_ch3_up_3', 'assets/chapter3-main/up-3.png');
-        this.load.image('player_ch3_up_4', 'assets/chapter3-main/up-4.png');
+        this.load.image('player_ch3_up_1', 'assets/chapter1-main/up-1.png');
+        this.load.image('player_ch3_up_2', 'assets/chapter1-main/up-2.png');
+        this.load.image('player_ch3_up_3', 'assets/chapter1-main/up-3.png');
+        this.load.image('player_ch3_up_4', 'assets/chapter1-main/up-4.png');
         
         // Down direction
-        this.load.image('player_ch3_down_1', 'assets/chapter3-main/down-1.png');
-        this.load.image('player_ch3_down_2', 'assets/chapter3-main/down-2.png');
-        this.load.image('player_ch3_down_3', 'assets/chapter3-main/down-3.png');
-        this.load.image('player_ch3_down_4', 'assets/chapter3-main/down-4.png');
+        this.load.image('player_ch3_down_1', 'assets/chapter1-main/down-1.png');
+        this.load.image('player_ch3_down_2', 'assets/chapter1-main/down-2.png');
+        this.load.image('player_ch3_down_3', 'assets/chapter1-main/down-3.png');
+        this.load.image('player_ch3_down_4', 'assets/chapter1-main/down-4.png');
         
         // Left direction
-        this.load.image('player_ch3_left_1', 'assets/chapter3-main/left-1.png');
-        this.load.image('player_ch3_left_2', 'assets/chapter3-main/left-2.png');
-        this.load.image('player_ch3_left_3', 'assets/chapter3-main/left-3.png');
-        this.load.image('player_ch3_left_4', 'assets/chapter3-main/left-4.png');
+        this.load.image('player_ch3_left_1', 'assets/chapter1-main/left-1.png');
+        this.load.image('player_ch3_left_2', 'assets/chapter1-main/left-2.png');
+        this.load.image('player_ch3_left_3', 'assets/chapter1-main/left-3.png');
+        this.load.image('player_ch3_left_4', 'assets/chapter1-main/left-4.png');
         
         // Right direction
-        this.load.image('player_ch3_right_1', 'assets/chapter3-main/right-1.png');
-        this.load.image('player_ch3_right_2', 'assets/chapter3-main/right-2.png');
-        this.load.image('player_ch3_right_3', 'assets/chapter3-main/right-3.png');
-        this.load.image('player_ch3_right_4', 'assets/chapter3-main/right-4.png');
+        this.load.image('player_ch3_right_1', 'assets/chapter1-main/right-1.png');
+        this.load.image('player_ch3_right_2', 'assets/chapter1-main/right-2.png');
+        this.load.image('player_ch3_right_3', 'assets/chapter1-main/right-3.png');
+        this.load.image('player_ch3_right_4', 'assets/chapter1-main/right-4.png');
+        console.log('🎭 Chapter 3 player assets loading queued');
     }
 
     loadEnemyAssets() {

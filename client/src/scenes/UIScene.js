@@ -45,18 +45,21 @@ export class UIScene extends Phaser.Scene {
     }
 
     create() {
-        // Get reference to the active game scene (either GameScene or Chapter2Scene)
-        this.gameScene = this.scene.get('GameScene') || this.scene.get('Chapter2Scene');
+        // Get reference to the active game scene (either GameScene, Chapter2Scene, or Chapter3Scene)
+        this.gameScene = this.scene.get('GameScene') || this.scene.get('Chapter2Scene') || this.scene.get('Chapter3Scene');
         
-        // If neither scene is active, try to detect which one should be used
+        // If no scene is active, try to detect which one should be used
         if (!this.gameScene) {
             const gameScene = this.scene.get('GameScene');
             const chapter2Scene = this.scene.get('Chapter2Scene');
+            const chapter3Scene = this.scene.get('Chapter3Scene');
             
             if (gameScene && gameScene.scene.isActive()) {
                 this.gameScene = gameScene;
             } else if (chapter2Scene && chapter2Scene.scene.isActive()) {
                 this.gameScene = chapter2Scene;
+            } else if (chapter3Scene && chapter3Scene.scene.isActive()) {
+                this.gameScene = chapter3Scene;
             } else {
                 console.warn('No active game scene found! Using GameScene as fallback.');
                 this.gameScene = gameScene;
@@ -87,7 +90,7 @@ export class UIScene extends Phaser.Scene {
         const height = this.cameras.main.height;
         this.memoryText = this.add.text(20, height - 60, '', {
             fontSize: '12px',
-            fontFamily: 'Arial',
+            fontFamily: 'VT323',
             color: '#00ff00',
             backgroundColor: '#000000',
             padding: { x: 8, y: 5 }
@@ -141,7 +144,7 @@ export class UIScene extends Phaser.Scene {
 
         this.healthText = this.add.text(50, 25, 'HP: 100/100', {
             fontSize: '16px',
-            fontFamily: 'Arial Black',
+            fontFamily: 'VT323',
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 2
@@ -167,7 +170,7 @@ export class UIScene extends Phaser.Scene {
 
         this.ammoText = this.add.text(50, 55, 'AMMO: 10/10', {
             fontSize: '16px',
-            fontFamily: 'Arial Black',
+            fontFamily: 'VT323',
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 2
@@ -193,7 +196,7 @@ export class UIScene extends Phaser.Scene {
 
         this.bulletInventoryText = this.add.text(50, 105, 'BULLETS: 10/20', {
             fontSize: '14px',
-            fontFamily: 'Arial Black',
+            fontFamily: 'VT323',
             color: '#ffcc00',
             stroke: '#000000',
             strokeThickness: 2
@@ -210,7 +213,7 @@ export class UIScene extends Phaser.Scene {
 
         this.weaponText = this.add.text(50, 125, 'WEAPON: RIFLE', {
             fontSize: '14px',
-            fontFamily: 'Arial Black',
+            fontFamily: 'VT323',
             color: '#00ff00',
             stroke: '#000000',
             strokeThickness: 1
@@ -232,7 +235,7 @@ export class UIScene extends Phaser.Scene {
         // Chapter text
         this.chapterText = this.add.text(width / 2, 20, 'CHAPTER 1', {
             fontSize: '18px',
-            fontFamily: 'Courier New',
+            fontFamily: 'VT323',
             color: '#ffff00'
         });
         this.chapterText.setOrigin(0.5, 0);
@@ -246,7 +249,7 @@ export class UIScene extends Phaser.Scene {
         // Controls hint
         this.add.text(width / 2, height - 30, 'WASD: Move | Left Click: Shoot | E: Melee | R: Reload | M: Toggle Map | ESC: Pause', {
             fontSize: '12px',
-            fontFamily: 'Courier New',
+            fontFamily: 'VT323',
             color: '#666666'
         }).setOrigin(0.5).setScrollFactor(0);
         
@@ -513,7 +516,7 @@ export class UIScene extends Phaser.Scene {
         if (!sceneKey) {
             const activeScenes = this.scene.manager.getScenes(true);
             sceneInstance = activeScenes.find(scene => 
-                scene.scene.key === 'GameScene' || scene.scene.key === 'Chapter2Scene'
+                scene.scene.key === 'GameScene' || scene.scene.key === 'Chapter2Scene' || scene.scene.key === 'Chapter3Scene'
             );
             sceneKey = sceneInstance ? sceneInstance.scene.key : 'GameScene';
         } else {
@@ -547,6 +550,7 @@ export class UIScene extends Phaser.Scene {
         // Stop all game scenes and go to main menu
         this.scene.stop('GameScene');
         this.scene.stop('Chapter2Scene');
+        this.scene.stop('Chapter3Scene');
         this.scene.stop('UIScene');
         this.scene.start('MainMenuScene');
     }
@@ -590,7 +594,7 @@ export class UIScene extends Phaser.Scene {
         // Victory title with trophy emoji
         const victoryTitle = this.add.text(width / 2, height / 2 - 120, '🏆 MISSION COMPLETE! 🏆', {
             fontSize: '52px',
-            fontFamily: 'Arial Black',
+            fontFamily: 'VT323',
             color: '#ffd700',
             stroke: '#000000',
             strokeThickness: 4,
@@ -603,7 +607,7 @@ export class UIScene extends Phaser.Scene {
         // Victory message
         const victoryMessage = this.add.text(width / 2, height / 2 - 40, 'All warehouses destroyed!\nThe enemy supply chain is broken.', {
             fontSize: '24px',
-            fontFamily: 'Arial',
+            fontFamily: 'VT323',
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 2,
@@ -625,7 +629,7 @@ export class UIScene extends Phaser.Scene {
         
         const nextChapterText = this.add.text(width / 2 - 150, height / 2 + 80, '🚀 NEXT CHAPTER', {
             fontSize: '20px',
-            fontFamily: 'Arial Black',
+            fontFamily: 'VT323',
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 2
@@ -643,7 +647,7 @@ export class UIScene extends Phaser.Scene {
         
         const continueText = this.add.text(width / 2 + 150, height / 2 + 80, '🌍 CONTINUE EXPLORING', {
             fontSize: '20px',
-            fontFamily: 'Arial Black',
+            fontFamily: 'VT323',
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 2
@@ -780,7 +784,7 @@ export class UIScene extends Phaser.Scene {
         
         const messageText = this.add.text(width / 2, height / 2 + 160, text, {
             fontSize: '32px',
-            fontFamily: 'Arial Black',
+            fontFamily: 'VT323',
             color: color,
             stroke: '#000000',
             strokeThickness: 3
@@ -858,7 +862,7 @@ export class UIScene extends Phaser.Scene {
         // Create button text
         this.nextChapterText = this.add.text(buttonX + 110, buttonY + 25, '🚀 NEXT CHAPTER', {
             fontSize: '16px',
-            fontFamily: 'Arial Black',
+            fontFamily: 'VT323',
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 2
@@ -922,7 +926,10 @@ export class UIScene extends Phaser.Scene {
             }
             
         // Update corner minimap every 30 frames with live player tracking
-            this.minimapUpdateCounter++;
+        if (!this.minimapUpdateCounter) {
+            this.minimapUpdateCounter = 0;
+        }
+        this.minimapUpdateCounter++;
         
         if (this.minimapUpdateCounter % 30 === 0) {
             this.updateCornerMinimapWithPlayerTracking();
@@ -954,7 +961,7 @@ export class UIScene extends Phaser.Scene {
         
         const title = this.add.text(10, 8, '📋 OBJECTIVES', {
             fontSize: '12px',
-            fontFamily: 'Arial Black',
+            fontFamily: 'VT323',
             color: '#ffff00',
             stroke: '#000000',
             strokeThickness: 1
@@ -963,7 +970,7 @@ export class UIScene extends Phaser.Scene {
         
         this.mainObjectiveText = this.add.text(10, 28, '', {
             fontSize: '11px',
-            fontFamily: 'Arial',
+            fontFamily: 'VT323',
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 1
@@ -972,7 +979,7 @@ export class UIScene extends Phaser.Scene {
         
         this.sideObjective1Text = this.add.text(10, 48, '', {
             fontSize: '10px',
-            fontFamily: 'Arial',
+            fontFamily: 'VT323',
             color: '#aaaaaa',
             stroke: '#000000',
             strokeThickness: 1
@@ -981,7 +988,7 @@ export class UIScene extends Phaser.Scene {
         
         this.sideObjective2Text = this.add.text(10, 68, '', {
             fontSize: '10px',
-            fontFamily: 'Arial',
+            fontFamily: 'VT323',
             color: '#aaaaaa',
             stroke: '#000000',
             strokeThickness: 1
@@ -1082,7 +1089,7 @@ export class UIScene extends Phaser.Scene {
         // Add small text indicator
         const mapLabel = this.add.text(0, -minimapSize/2 - 10, 'MAP', {
             fontSize: '10px',
-            fontFamily: 'Arial Black',
+            fontFamily: 'VT323',
             color: '#00ff00'
         });
         mapLabel.setOrigin(0.5);
@@ -1120,7 +1127,7 @@ export class UIScene extends Phaser.Scene {
         // Title for dev buttons
         const devTitle = this.add.text(buttonX, buttonY - 20, 'DEV TELEPORT:', {
             fontSize: '14px',
-            fontFamily: 'Arial Bold',
+            fontFamily: 'VT323',
             color: '#ff0000',
             backgroundColor: '#000000',
             padding: { x: 5, y: 2 }
@@ -1152,7 +1159,7 @@ export class UIScene extends Phaser.Scene {
             // Button text - initially gray
             const buttonText = this.add.text(buttonX + buttonWidth/2, y + buttonHeight/2, buttonData.name + ' (Loading...)', {
                 fontSize: '12px',
-                fontFamily: 'Arial',
+                fontFamily: 'VT323',
                 color: '#888888'
             });
             buttonText.setOrigin(0.5);
@@ -1197,6 +1204,7 @@ export class UIScene extends Phaser.Scene {
         
         // Check which chapter is active
         const isChapter2 = this.gameScene && this.gameScene.scene.key === 'Chapter2Scene';
+        const isChapter3 = this.gameScene && this.gameScene.scene.key === 'Chapter3Scene';
         
         if (isChapter2) {
             // For Chapter 2, check blackboard houses instead of warehouses
@@ -1207,6 +1215,31 @@ export class UIScene extends Phaser.Scene {
                 return;
             }
             console.log('✅ Enabling dev buttons with', blackboardHouses.children.entries.length, 'blackboard houses available (Chapter 2)');
+        } else if (isChapter3) {
+            // For Chapter 3, check radar towers and boss
+            const radarTowers = this.gameScene?.tileSystem?.radarTowers;
+            const commandingColonel = this.gameScene?.commandingColonel;
+            const warehouses = this.gameScene?.tileSystem?.warehouses; // Boss warehouse
+            if (!radarTowers || radarTowers.length === 0 || !commandingColonel || !warehouses || warehouses.length === 0) {
+                console.error('❌ Cannot enable dev buttons: No radar towers, commanding colonel, or boss warehouse available');
+                this.updateButtonsToErrorState();
+                return;
+            }
+            
+            // Check if preloading is complete for Chapter 3
+            const tileSystem = this.gameScene.tileSystem;
+            if (tileSystem.getPreloadedAreaInfo) {
+                const preloadInfo = tileSystem.getPreloadedAreaInfo();
+                console.log('📡 Chapter 3 Preload status:', preloadInfo);
+                
+                const expectedAreas = radarTowers.length + warehouses.length + 1; // +1 for spawn area
+                if (preloadInfo.totalAreas < expectedAreas) {
+                    console.warn('⚠️ Chapter 3 preloading not complete. Expected:', expectedAreas, 'Got:', preloadInfo.totalAreas);
+                    this.updateButtonsToErrorState();
+                    return;
+                }
+            }
+            console.log('✅ Enabling dev buttons with', radarTowers.length, 'radar towers, commanding colonel, and boss warehouse available (Chapter 3)');
         } else {
             // For Chapter 1, check warehouses as before
             const warehouses = this.gameScene?.tileSystem?.warehouses;
@@ -1248,10 +1281,21 @@ export class UIScene extends Phaser.Scene {
                 let buttonText = buttonElement.originalName;
                 if (isChapter2 && buttonElement.index >= 0 && buttonElement.index < 3) {
                     buttonText = `Blackboard ${buttonElement.index + 1}`;
+                } else if (isChapter3 && buttonElement.index >= 0 && buttonElement.index < 3) {
+                    // Chapter 3: Radar towers and boss
+                    if (buttonElement.index === 0) {
+                        buttonText = 'Radar Tower 1';
+                    } else if (buttonElement.index === 1) {
+                        buttonText = 'Radar Tower 2';
+                    } else if (buttonElement.index === 2) {
+                        buttonText = 'Final Boss';
+                    }
                 } else if (buttonElement.index === -2) {
                     // Update skip button text based on current chapter
                     if (isChapter2) {
                         buttonText = 'Skip to Chapter 3';
+                    } else if (isChapter3) {
+                        buttonText = 'Victory Screen';
                     } else {
                         buttonText = 'Skip to Chapter 2';
                     }
@@ -1287,14 +1331,17 @@ export class UIScene extends Phaser.Scene {
         
         // Check which chapter is active
         const isChapter2 = this.gameScene && this.gameScene.scene.key === 'Chapter2Scene';
+        const isChapter3 = this.gameScene && this.gameScene.scene.key === 'Chapter3Scene';
         
         let targetX, targetY;
         
         if (objectiveIndex === -1) {
-            // Teleport to spawn position (both chapters)
+            // Teleport to spawn position (all chapters)
             let spawnGrid;
             if (isChapter2) {
                 spawnGrid = { x: 50, y: 450 }; // Chapter 2 spawn position
+            } else if (isChapter3) {
+                spawnGrid = { x: 37, y: 562 }; // Chapter 3 spawn position (same as Chapter 1)
             } else {
                 spawnGrid = { x: 37, y: 562 }; // Chapter 1 spawn position
             }
@@ -1302,6 +1349,42 @@ export class UIScene extends Phaser.Scene {
             targetX = worldPos.x;
             targetY = worldPos.y;
             console.log('Teleporting to spawn at grid:', spawnGrid, 'world:', worldPos);
+        } else if (isChapter3) {
+            // Chapter 3: Teleport to radar towers and final boss
+            if (objectiveIndex === 0 || objectiveIndex === 1) {
+                // Teleport to radar towers
+                const radarTowers = this.gameScene.tileSystem.radarTowers;
+                if (!radarTowers || radarTowers.length === 0) {
+                    console.error('No radar towers found! Make sure the map is generated first.');
+                    return;
+                }
+                
+                if (objectiveIndex >= radarTowers.length) {
+                    console.error('Invalid radar tower index:', objectiveIndex, 'Available towers:', radarTowers.length);
+                    return;
+                }
+                
+                // Get radar tower data
+                const radarTower = radarTowers[objectiveIndex];
+                console.log('Teleporting to radar tower:', radarTower);
+                targetX = radarTower.worldX;
+                targetY = radarTower.worldY;
+                console.log('Radar tower position:', targetX, targetY);
+            } else if (objectiveIndex === 2) {
+                // Teleport to final boss (commanding colonel)
+                if (!this.gameScene.commandingColonel) {
+                    console.error('No commanding colonel found! Make sure the boss is created first.');
+                    return;
+                }
+                
+                console.log('Teleporting to commanding colonel (final boss):', this.gameScene.commandingColonel);
+                targetX = this.gameScene.commandingColonel.x;
+                targetY = this.gameScene.commandingColonel.y;
+                console.log('Commanding colonel position:', targetX, targetY);
+            } else {
+                console.error('Invalid Chapter 3 objective index:', objectiveIndex);
+                return;
+            }
         } else if (isChapter2) {
             // Chapter 2: Teleport to blackboard houses
             const blackboardHouses = this.gameScene.blackboardHouses;
@@ -1356,11 +1439,25 @@ export class UIScene extends Phaser.Scene {
         
         // ENHANCED TELEPORTATION with pre-rendered area verification
         
-        // Verify the target area is pre-rendered (Chapter 1 only)
+        // Verify the target area is pre-rendered (Chapter 1 and 3)
         const tileSystem = this.gameScene.tileSystem;
         if (!isChapter2 && tileSystem.getPreloadedAreaInfo) {
             const preloadInfo = tileSystem.getPreloadedAreaInfo();
-            const targetAreaName = objectiveIndex === -1 ? 'spawn' : `warehouse_${objectiveIndex + 1}`;
+            let targetAreaName;
+            
+            if (objectiveIndex === -1) {
+                targetAreaName = 'spawn';
+            } else if (isChapter3) {
+                if (objectiveIndex === 0) {
+                    targetAreaName = 'radar_tower_1';
+                } else if (objectiveIndex === 1) {
+                    targetAreaName = 'radar_tower_2';
+                } else if (objectiveIndex === 2) {
+                    targetAreaName = 'boss_command_center';
+                }
+            } else {
+                targetAreaName = `warehouse_${objectiveIndex + 1}`;
+            }
             
             console.log(`🎯 Teleporting to ${targetAreaName}. Preloaded areas:`, preloadInfo.totalAreas);
         }
@@ -1388,20 +1485,40 @@ export class UIScene extends Phaser.Scene {
             successMessage = `✅ Successfully teleported to spawn at (${targetX}, ${targetY})`;
         } else if (isChapter2) {
             successMessage = `✅ Successfully teleported to blackboard house ${objectiveIndex + 1} at (${targetX}, ${targetY})`;
+        } else if (isChapter3) {
+            if (objectiveIndex === 0) {
+                successMessage = `✅ Successfully teleported to Radar Tower 1 at (${targetX}, ${targetY})`;
+            } else if (objectiveIndex === 1) {
+                successMessage = `✅ Successfully teleported to Radar Tower 2 at (${targetX}, ${targetY})`;
+            } else if (objectiveIndex === 2) {
+                successMessage = `✅ Successfully teleported to Final Boss (Commanding Colonel) at (${targetX}, ${targetY})`;
+            }
         } else {
             successMessage = `✅ Successfully teleported to warehouse ${objectiveIndex + 1} at (${targetX}, ${targetY})`;
         }
         console.log(successMessage);
         
         // Show teleport feedback to user
-        this.showTeleportFeedback(objectiveIndex, isChapter2);
+        this.showTeleportFeedback(objectiveIndex, isChapter2, isChapter3);
     }
 
     skipToNextChapter() {
         // Determine current chapter and next chapter
         const isChapter2 = this.gameScene && this.gameScene.scene.key === 'Chapter2Scene';
+        const isChapter3 = this.gameScene && this.gameScene.scene.key === 'Chapter3Scene';
         
-        if (isChapter2) {
+        if (isChapter3) {
+            console.log('🚀 DEV: Launching Victory Screen...');
+            
+            // Mark Chapter 3 as completed
+            this.game.chapterManager.completeChapter(3);
+            this.game.chapterManager.saveProgress();
+            
+            // Launch the dedicated Victory Scene
+            this.scene.start('VictoryScene');
+            
+            console.log('🎉 Game completed! Victory Scene launched.');
+        } else if (isChapter2) {
             console.log('🚀 DEV: Skipping to Chapter 3...');
             
             // Mark Chapter 2 as completed
@@ -1452,7 +1569,7 @@ export class UIScene extends Phaser.Scene {
             const player = this.gameScene.player;
             
             // Update player position in tile system for real-time tracking
-            if (player) {
+            if (player && player.active && typeof player.x === 'number' && typeof player.y === 'number') {
                 tileSystem.updatePlayerPosition(player.x, player.y);
             }
             
@@ -1522,9 +1639,11 @@ export class UIScene extends Phaser.Scene {
             graphics.destroy();
             
             // Update player dot position with real-time tracking
-            const playerMinimapX = (explorationData.playerGrid.x - tileSystem.mapWidth / 2) * scale;
-            const playerMinimapY = (explorationData.playerGrid.y - tileSystem.mapHeight / 2) * scale;
-            this.cornerPlayerDot.setPosition(playerMinimapX, playerMinimapY);
+            if (this.cornerPlayerDot && this.cornerPlayerDot.active) {
+                const playerMinimapX = (explorationData.playerGrid.x - tileSystem.mapWidth / 2) * scale;
+                const playerMinimapY = (explorationData.playerGrid.y - tileSystem.mapHeight / 2) * scale;
+                this.cornerPlayerDot.setPosition(playerMinimapX, playerMinimapY);
+            }
             
         } catch (error) {
             console.warn('Corner minimap update error:', error);
@@ -1568,7 +1687,7 @@ export class UIScene extends Phaser.Scene {
         // Map title
         const title = this.add.text(0, -mapSize/2 - 30, 'TACTICAL MAP', {
             fontSize: '24px',
-            fontFamily: 'Arial Black',
+            fontFamily: 'VT323',
             color: '#00ff00'
         });
         title.setOrigin(0.5);
@@ -1586,7 +1705,7 @@ export class UIScene extends Phaser.Scene {
         // Instructions
         const instructions = this.add.text(0, mapSize/2 + 40, 'Press M or Click to Close', {
             fontSize: '16px',
-            fontFamily: 'Arial',
+            fontFamily: 'VT323',
             color: '#ffffff'
         });
         instructions.setOrigin(0.5);
@@ -1740,6 +1859,12 @@ export class UIScene extends Phaser.Scene {
             const tileSystem = this.gameScene.tileSystem;
             const player = this.gameScene.player;
             
+            // Enhanced player validation
+            if (!player || !player.active || typeof player.x !== 'number' || typeof player.y !== 'number') {
+                console.warn('Player not ready for fullscreen minimap update');
+                return;
+            }
+            
             // Update the player position in tile system to get current location
             tileSystem.updatePlayerPosition(player.x, player.y);
             
@@ -1779,7 +1904,7 @@ export class UIScene extends Phaser.Scene {
         
         this.pauseText = this.add.text(width / 2, height / 2, 'PAUSED\n\nPress ESC to Resume', {
             fontSize: '40px',
-            fontFamily: 'Courier New',
+            fontFamily: 'VT323',
             color: '#ffffff',
             align: 'center',
             stroke: '#000000',
@@ -1994,12 +2119,24 @@ export class UIScene extends Phaser.Scene {
         });
     }
     
-    showTeleportFeedback(objectiveIndex, isChapter2 = false) {
+    showTeleportFeedback(objectiveIndex, isChapter2 = false, isChapter3 = false) {
         let locationName;
+        let color = '#00ffff'; // Default cyan for Chapter 1
+        
         if (objectiveIndex === -1) {
             locationName = 'SPAWN AREA';
         } else if (isChapter2) {
             locationName = `BLACKBOARD HOUSE ${objectiveIndex + 1}`;
+            color = '#ffff00'; // Yellow for Chapter 2
+        } else if (isChapter3) {
+            if (objectiveIndex === 0) {
+                locationName = 'RADAR TOWER 1';
+            } else if (objectiveIndex === 1) {
+                locationName = 'RADAR TOWER 2';
+            } else if (objectiveIndex === 2) {
+                locationName = 'FINAL BOSS';
+            }
+            color = '#ff0000'; // Red for Chapter 3
         } else {
             locationName = `WAREHOUSE ${objectiveIndex + 1}`;
         }
@@ -2011,8 +2148,8 @@ export class UIScene extends Phaser.Scene {
             `🚀 TELEPORTED TO ${locationName}`, 
             {
                 fontSize: '24px',
-                fontFamily: 'Arial Black',
-                color: isChapter2 ? '#ffff00' : '#00ffff', // Yellow for Chapter 2, cyan for Chapter 1
+                fontFamily: 'VT323',
+                color: color,
                 stroke: '#000000',
                 strokeThickness: 3,
                 shadow: {
@@ -2071,7 +2208,7 @@ export class UIScene extends Phaser.Scene {
             '⚠️ WORLD NOT READY\nPlease wait for map generation to complete...', 
             {
                 fontSize: '20px',
-                fontFamily: 'Arial Black',
+                fontFamily: 'VT323',
                 color: '#ffaa00',
                 stroke: '#000000',
                 strokeThickness: 3,
@@ -2147,11 +2284,29 @@ export class UIScene extends Phaser.Scene {
         
         // Check which chapter is active
         const isChapter2 = this.gameScene && this.gameScene.scene.key === 'Chapter2Scene';
+        const isChapter3 = this.gameScene && this.gameScene.scene.key === 'Chapter3Scene';
         
         if (isChapter2) {
             // For Chapter 2, check blackboard houses
             const blackboardHouses = this.gameScene.blackboardHouses;
             return blackboardHouses && blackboardHouses.children.entries.length > 0;
+        } else if (isChapter3) {
+            // For Chapter 3, check radar towers, boss warehouse, and preloading
+            const radarTowers = this.gameScene.tileSystem.radarTowers;
+            const warehouses = this.gameScene.tileSystem.warehouses; // Boss warehouse
+            const commandingColonel = this.gameScene.commandingColonel;
+            
+            if (!radarTowers || radarTowers.length === 0 || !warehouses || warehouses.length === 0 || !commandingColonel) {
+                return false;
+            }
+            
+            // Check if preloading is complete
+            const tileSystem = this.gameScene.tileSystem;
+            if (tileSystem.getPreloadedAreaInfo) {
+                const preloadInfo = tileSystem.getPreloadedAreaInfo();
+                const expectedAreas = radarTowers.length + warehouses.length + 1; // +1 for spawn area
+                return preloadInfo.totalAreas >= expectedAreas;
+            }
         } else {
             // For Chapter 1, check warehouses and preloading
             const warehouses = this.gameScene.tileSystem.warehouses;

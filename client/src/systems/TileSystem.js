@@ -75,7 +75,10 @@ export class TileSystem {
         this.scene.load.image('puzzle_board', 'assets/environment/warehouse-2.png'); // Using warehouse-2 for blackboard houses
         this.scene.load.image('cabin_wooden', 'assets/environment/house-1.png'); // Using house assets
         this.scene.load.image('house_small', 'assets/environment/house-1.png'); 
-        this.scene.load.image('shed_old', 'assets/environment/house-2.png'); 
+        this.scene.load.image('shed_old', 'assets/environment/house-2.png');
+        
+        // Military structures - radar towers for Chapter 3
+        this.scene.load.image('radar_tower', 'assets/environment/radar.png'); 
         
         // Props and decorations - stone formations and environmental elements
         this.scene.load.image('rock_boulder', 'assets/environment/stone-1.png'); // Large boulder
@@ -1328,6 +1331,162 @@ export class TileSystem {
         }
     }
     
+    preloadRadarTowerAreas() {
+        // LIGHTWEIGHT radar tower and boss preloading - only 10x10 areas for performance
+        console.log('📡 Lightweight preloading of radar tower and boss areas (10x10 each)...');
+        
+        if (!this.radarTowers || this.radarTowers.length === 0) {
+            console.warn('⚠️ No radar towers to preload');
+            return;
+        }
+        
+        const preloadRadius = 5; // 10x10 area (5 tiles in each direction)
+        let totalTilesPreloaded = 0;
+        
+        // Store preloaded areas for tracking
+        this.preloadedAreas = this.preloadedAreas || [];
+        
+        // Preload radar towers
+        this.radarTowers.forEach((radarTower, index) => {
+            console.log(`📡 Preloading radar tower ${index + 1} (${radarTower.id}) at (${radarTower.x}, ${radarTower.y}) - 10x10 area`);
+            
+            // Calculate small area bounds around radar tower
+            const minX = Math.max(0, radarTower.x - preloadRadius);
+            const maxX = Math.min(this.mapWidth - 1, radarTower.x + preloadRadius);
+            const minY = Math.max(0, radarTower.y - preloadRadius);
+            const maxY = Math.min(this.mapHeight - 1, radarTower.y + preloadRadius);
+            
+            let areaTilesLoaded = 0;
+            
+            // FORCE RENDER only immediate radar tower area
+            for (let x = minX; x <= maxX; x++) {
+                for (let y = minY; y <= maxY; y++) {
+                    // Force render base tiles
+                    this.forceRenderTile(x, y, 'base');
+                    areaTilesLoaded++;
+                    
+                    // Force render obstacles (including the radar tower itself)
+                    if (this.obstacleLayer[x][y]) {
+                        this.forceRenderTile(x, y, 'obstacle');
+                        areaTilesLoaded++;
+                    }
+                    
+                    // Force render decorations
+                    if (this.decorationLayer[x][y]) {
+                        this.forceRenderTile(x, y, 'decoration');
+                        areaTilesLoaded++;
+                    }
+                }
+            }
+            
+            // Mark area as preloaded
+            this.preloadedAreas.push({
+                radarTowerId: radarTower.id,
+                radarTowerIndex: index,
+                centerX: radarTower.x,
+                centerY: radarTower.y,
+                radius: preloadRadius,
+                tilesLoaded: areaTilesLoaded
+            });
+            
+            totalTilesPreloaded += areaTilesLoaded;
+            console.log(`✅ Radar Tower ${index + 1} area preloaded: ${areaTilesLoaded} tiles (10x10)`);
+        });
+        
+        // Preload boss warehouse areas
+        if (this.warehouses && this.warehouses.length > 0) {
+            this.warehouses.forEach((warehouse, index) => {
+                console.log(`🏢 Preloading boss warehouse ${index + 1} (${warehouse.id}) at (${warehouse.x}, ${warehouse.y}) - 10x10 area`);
+                
+                // Calculate small area bounds around boss warehouse
+                const minX = Math.max(0, warehouse.x - preloadRadius);
+                const maxX = Math.min(this.mapWidth - 1, warehouse.x + preloadRadius);
+                const minY = Math.max(0, warehouse.y - preloadRadius);
+                const maxY = Math.min(this.mapHeight - 1, warehouse.y + preloadRadius);
+                
+                let areaTilesLoaded = 0;
+                
+                // FORCE RENDER only immediate boss warehouse area
+                for (let x = minX; x <= maxX; x++) {
+                    for (let y = minY; y <= maxY; y++) {
+                        // Force render base tiles
+                        this.forceRenderTile(x, y, 'base');
+                        areaTilesLoaded++;
+                        
+                        // Force render obstacles (including the boss warehouse itself)
+                        if (this.obstacleLayer[x][y]) {
+                            this.forceRenderTile(x, y, 'obstacle');
+                            areaTilesLoaded++;
+                        }
+                        
+                        // Force render decorations
+                        if (this.decorationLayer[x][y]) {
+                            this.forceRenderTile(x, y, 'decoration');
+                            areaTilesLoaded++;
+                        }
+                    }
+                }
+                
+                // Mark area as preloaded
+                this.preloadedAreas.push({
+                    bossWarehouseId: warehouse.id,
+                    bossWarehouseIndex: index,
+                    centerX: warehouse.x,
+                    centerY: warehouse.y,
+                    radius: preloadRadius,
+                    tilesLoaded: areaTilesLoaded
+                });
+                
+                totalTilesPreloaded += areaTilesLoaded;
+                console.log(`✅ Boss Warehouse ${index + 1} area preloaded: ${areaTilesLoaded} tiles (10x10)`);
+            });
+        }
+        
+        // Also preload small spawn area
+        const spawnX = 37;
+        const spawnY = 562;
+        const spawnRadius = 10; // Smaller spawn area
+        
+        console.log(`🏠 Preloading spawn area at (${spawnX}, ${spawnY}) - 20x20 area`);
+        
+        const spawnMinX = Math.max(0, spawnX - spawnRadius);
+        const spawnMaxX = Math.min(this.mapWidth - 1, spawnX + spawnRadius);
+        const spawnMinY = Math.max(0, spawnY - spawnRadius);
+        const spawnMaxY = Math.min(this.mapHeight - 1, spawnY + spawnRadius);
+        
+        let spawnTilesLoaded = 0;
+        for (let x = spawnMinX; x <= spawnMaxX; x++) {
+            for (let y = spawnMinY; y <= spawnMaxY; y++) {
+                this.forceRenderTile(x, y, 'base');
+                spawnTilesLoaded++;
+                if (this.obstacleLayer[x][y]) {
+                    this.forceRenderTile(x, y, 'obstacle');
+                    spawnTilesLoaded++;
+                }
+                if (this.decorationLayer[x][y]) {
+                    this.forceRenderTile(x, y, 'decoration');
+                    spawnTilesLoaded++;
+                }
+            }
+        }
+        
+        // Mark spawn area as preloaded
+        this.preloadedAreas.push({
+            spawnId: 'spawn',
+            spawnIndex: -1,
+            centerX: spawnX,
+            centerY: spawnY,
+            radius: spawnRadius,
+            tilesLoaded: spawnTilesLoaded
+        });
+        
+        totalTilesPreloaded += spawnTilesLoaded;
+        
+        const totalObjectives = this.radarTowers.length + (this.warehouses ? this.warehouses.length : 0) + 1; // +1 for spawn
+        console.log(`✅ LIGHTWEIGHT CHAPTER 3 PRELOADING COMPLETE: ${totalTilesPreloaded} total tiles across ${totalObjectives} locations`);
+        console.log('🎯 Performance-optimized radar tower and boss loading ready!');
+    }
+
     // Get preloaded area info (for debugging)
     getPreloadedAreaInfo() {
         return {
@@ -2856,6 +3015,13 @@ export class TileSystem {
     // Update visible tiles based on camera position - called from GameScene
     updateVisibleTiles() {
         const camera = this.scene.cameras.main;
+        
+        // Safety check for camera
+        if (!camera || camera.scrollX === undefined || camera.scrollY === undefined) {
+            console.warn('Camera not ready for updateVisibleTiles');
+            return;
+        }
+        
         const cameraX = camera.scrollX + camera.width / 2;
         const cameraY = camera.scrollY + camera.height / 2;
         

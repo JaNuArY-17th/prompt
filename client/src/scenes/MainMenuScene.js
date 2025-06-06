@@ -8,30 +8,30 @@ export class MainMenuScene extends Phaser.Scene {
         const height = this.cameras.main.height;
 
         // Title
-        this.add.text(width / 2, height / 3, '2.5D ACTION SHOOTER', {
+        this.add.text(width / 2, height / 3, 'MỆNH LỆNH ĐỘC LẬP', {
             fontSize: '48px',
-            fontFamily: 'Courier New',
+            fontFamily: 'VT323',
             color: '#ffffff',
             fontStyle: 'bold'
         }).setOrigin(0.5);
 
         // Subtitle
-        this.add.text(width / 2, height / 3 + 60, 'Isometric Combat Adventure', {
+        this.add.text(width / 2, height / 3 + 60, 'Cuộc Phiêu Lưu Chiến Đấu', {
             fontSize: '18px',
-            fontFamily: 'Courier New',
+            fontFamily: 'VT323',
             color: '#aaaaaa'
         }).setOrigin(0.5);
 
         // Menu options
-        const startButton = this.add.text(width / 2, height / 2 + 50, 'START GAME', {
+        const startButton = this.add.text(width / 2, height / 2 + 50, 'BẮT ĐẦU GAME', {
             fontSize: '24px',
-            fontFamily: 'Courier New',
+            fontFamily: 'VT323',
             color: '#00ff00'
         }).setOrigin(0.5);
 
-        const controlsButton = this.add.text(width / 2, height / 2 + 100, 'CONTROLS', {
+        const controlsButton = this.add.text(width / 2, height / 2 + 100, 'ĐIỀU KHIỂN', {
             fontSize: '24px',
-            fontFamily: 'Courier New',
+            fontFamily: 'VT323',
             color: '#ffffff'
         }).setOrigin(0.5);
 
@@ -65,9 +65,9 @@ export class MainMenuScene extends Phaser.Scene {
         });
 
         // Instructions
-        this.add.text(width / 2, height - 50, 'Click START GAME or press ENTER to begin', {
+        this.add.text(width / 2, height - 50, 'Click BẮT ĐẦU GAME hoặc nhấn ENTER để bắt đầu', {
             fontSize: '14px',
-            fontFamily: 'Courier New',
+            fontFamily: 'VT323',
             color: '#666666'
         }).setOrigin(0.5);
 
@@ -87,24 +87,24 @@ export class MainMenuScene extends Phaser.Scene {
         overlay.setInteractive();
 
         const controlsText = [
-            'CONTROLS',
+            'ĐIỀU KHIỂN',
             '',
-            'WASD - Move',
-            'Left Click - Shoot',
-            'E - Melee Attack / Interact',
-            'R - Reload',
-            'ESC - Pause',
+            'WASD - Di chuyển',
+            'Click trái - Bắn',
+            'E - Tấn công cận chiến / Tương tác',
+            'R - Nạp đạn',
+            'ESC - Tạm dừng',
             '',
-            'Combat & Learning!',
-            'Find blackboards in Chapter 2',
-            'for Vietnamese puzzle lessons!',
+            'Chiến đấu & Học tập!',
+            'Tìm bảng đen ở Chương 2',
+            'để học từ vựng tiếng Việt!',
             '',
-            'Click anywhere to close'
+            'Click bất kỳ đâu để đóng'
         ];
 
         const text = this.add.text(width / 2, height / 2, controlsText.join('\n'), {
             fontSize: '20px',
-            fontFamily: 'Courier New',
+            fontFamily: 'VT323',
             color: '#ffffff',
             align: 'center'
         }).setOrigin(0.5);
